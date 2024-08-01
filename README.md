@@ -1,7 +1,7 @@
 Create static copies of HAPI data
 =================================
 
-Output is in CSV with HXL hashtags.
+Download data from [The Humanitarian API](https://hdx-hapi.readthedocs.io/en/latest/) (HAPI), maintained by the UN [Centre for Humanitarian Data](https://centre.humdata.org).
 
 ## Setup
 
@@ -16,6 +16,10 @@ The script will download the full contents of a HAPI endpoint, given a category 
 ## HXL support
 
 The output will contain [HXL](https://hxlstandard.org) hashtags, controlled by the map in ``inputs/hashtag-map.json`` .  The script looks first for a mapping under the specific category and subcategory, and if that fails, it looks for a mapping under "DEFAULT".  If no mapping is found, the HXL hashtag will be omitted for that column.
+
+## Caveat
+
+This is a personal project.  The Centre for Humanitarian Data is not responsible for its accuracy or maintenance.
 
 
 Started 2024-08-01 by David Megginson
