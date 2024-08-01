@@ -1,0 +1,5 @@
+{
+    "hapi-host": "hapi.humdata.org",
+    "api-key": "{HAPI APP KEY}",
+    "page-size": "1000"
+}

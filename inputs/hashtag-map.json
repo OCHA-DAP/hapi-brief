@@ -1,0 +1,66 @@
+{
+    "DEFAULT": {
+        "admin1_code": "#adm1+code",
+        "admin1_name": "#adm1+name",
+        "admin1_ref": "#adm1_hapi_id",
+        "admin2_code": "#adm2+code",
+        "admin2_name": "#adm2+name",
+        "admin2_ref": "#adm2+hapi_id",
+        "age_range": "#indicator+age_range+code",
+        "disabled_marker": "#indicator+disabled+bool",
+        "gender": "#indicator+gender+code",
+        "location_code": "#country+code",
+        "location_name": "#country+name",
+        "location_ref": "#country+hapi_id",
+        "max_age": "#indicator+max_age+num",
+        "min_age": "#indicator+min_age+num",
+        "org_acronym": "#org+acronym",
+        "org_name": "#org+name",
+        "org_type_code": "#org+type+code",
+        "org_type_description": "#org+type",
+        "population": "#population",
+        "population_group": "#indicator+population_group+code",
+        "population_status": "#indicator+population_status+code",
+        "reference_period_end": "#date+end",
+        "reference_period_start": "#date+start",
+        "sector_code": "#sector+code",
+        "sector_name": "#sector+name"
+    },
+    "affected-people": {
+        "humanitarian-needs": {
+            "population": "#inneed"
+        }
+    },
+    "coordination-context": {
+        "operational-presence": {
+        }
+    },
+    "metadata": {
+        "admin1": {
+            "code": "#adm1+code",
+            "id": "#adm1+hapi_id",
+            "name": "#adm1+name"
+        },
+        "admin2": {
+            "code": "#adm2+code",
+            "id": "#adm2+hapi_id",
+            "name": "#adm2+name"
+        },
+        "location": {
+            "code": "#country+code",
+            "from_cods": "#indicator+from_cods",
+            "id": "#country+hapi_id",
+            "has_hrp": "#indicator+has_hrp",
+            "in_gho": "#indicator+in_gho",
+            "name": "#country+name"
+        },
+        "org": {
+            "acronym": "#org+acronym",
+            "name": "#org+name"
+        },
+        "sector": {
+            "code": "#sector+code",
+            "name": "#sector+name"
+        }
+    }
+}
