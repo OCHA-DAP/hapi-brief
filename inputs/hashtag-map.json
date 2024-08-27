@@ -7,32 +7,106 @@
         "admin2_name": "#adm2+name",
         "admin2_ref": "#adm2+hapi_id",
         "age_range": "#indicator+age_range+code",
+        "asylum_location_ref": "#country+asylum+hapi_id",
+        "asylum_location_code": "#country+asylum+code",
+        "asylum_location_name": "#country+asylum+name",
         "disabled_marker": "#indicator+disabled+bool",
+        "from_cods": "#indicator+from_cods+bool",
         "gender": "#indicator+gender+code",
+        "hapi_updated_date": "#date+hapi_updated",
+        "lat": "#geo+lat",
         "location_code": "#country+code",
         "location_name": "#country+name",
         "location_ref": "#country+hapi_id",
+        "lon": "#geo+lon",
         "max_age": "#indicator+max_age+num",
         "min_age": "#indicator+min_age+num",
         "org_acronym": "#org+acronym",
         "org_name": "#org+name",
         "org_type_code": "#org+type+code",
         "org_type_description": "#org+type",
+        "origin_location_ref": "#country+origin+hapi_id",
+        "origin_location_code": "#country+origin+code",
+        "origin_location_name": "#country+origin+name",
         "population": "#population",
         "population_group": "#indicator+population_group+code",
         "population_status": "#indicator+population_status+code",
         "reference_period_end": "#date+end",
         "reference_period_start": "#date+start",
+        "resource_hdx_id": "#meta+source+hdx+resource_id",
         "sector_code": "#sector+code",
-        "sector_name": "#sector+name"
+        "sector_name": "#sector+name",
+        "title": "#description+title"
     },
     "affected-people": {
+        "idps": {
+            "reporting_round": "#indicator+dtm_round+num",
+            "assessment_type": "#indicator+dtm+type"
+        },
+        "refugees": {
+        },
+        "returnees": {
+        },
         "humanitarian-needs": {
             "population": "#inneed"
         }
     },
     "coordination-context": {
         "operational-presence": {
+        },
+        "funding": {
+            "appeal_code": "#response+appeal+code",
+            "appeal_name": "#response+appeal+name",
+            "appeal_type": "#response+appeal+type",
+            "requirements_usd": "#value+requirements+c_usd",
+            "funding_usd": "#value+funding+c_usd",
+            "funding_pct": "#indicator+funding+pct"
+        },
+        "conflict-event": {
+            "event_type": "#event+type",
+            "events": "#impact+events+num",
+            "fatalities": "#impact+fatalities+num"
+        },
+        "national-risk": {
+            "risk_class": "#indicator+risk_class+code",
+            "global_rank": "#indicator+global_rank+num",
+            "overall_risk": "#indicator+overall_risk+num",
+            "hazard_exposure_risk": "#indicator+hazard_exposure_risk+num",
+            "vulnerability_risk": "#indicator+vulnerability_risk+num",
+            "coping_capacity_risk": "#indicator+coping_capacity_risk+num",
+            "meta_missing_indicators_pct": "#meta+missing_indicators+pct",
+            "meta_avg_recentness_years": "#meta+avg_recentness_years+num"
+        }
+    },
+    "food": {
+        "food-security": {
+            "ipc_phase": "#meta+ipc_phase+num",
+            "ipc_type": "#meta+ipc_type+code",
+            "population_in_phase": "#indicator+population_in_phase+num",
+            "population_fraction_in_phase": "#indicator+population_fraction_in_phase+pct"
+        },
+        "food-price": {
+            "market_code": "#loc+market+code",
+            "commodity_code": "#item+commodity+code",
+            "currency_code": "#currency+code",
+            "unit": "#item+unit",
+            "price_flag": "#indicator+price+flag",
+            "price_type": "#indicator+price+type",
+            "price": "#value+price",
+            "market_name": "#loc+market+name",
+            "commodity_category": "#item+commodity+category",
+            "commodity_name": "#item+commodity+name"
+        }
+    },
+    "population-social": {
+        "population": {
+        },
+        "poverty-rate": {
+            "mpi": "#indicator+mpi",
+            "head_count_ratio": "#indicator+head_count_ration",
+            "intensity_of_deprivation": "#indicator+intensity_of_deprivation",
+            "vulnerable_to_poverty": "#affected+vulnerable_to_poverty+num",
+            "in_severe_poverty": "#affected+in_severe_poverty+num"
         }
     },
     "metadata": {
@@ -46,21 +120,62 @@
             "id": "#adm2+hapi_id",
             "name": "#adm2+name"
         },
+        "currency": {
+            "code": "#currency+code",
+            "name": "#currency+name"
+        },
+        "dataset": {
+            "hdx_id": "#meta+source+dataset+hdx_id",
+            "hdx_stub": "#meta+source+dataset+hdx_stub",
+            "hdx_provider_stub": "#meta+source+provider_stub",
+            "hdx_provider_name": "#meta+source+provider_name"
+        },
+        "data_availability": {
+            "category": "#meta+category",
+            "subcategory": "#meta+subcategory"
+        },
         "location": {
             "code": "#country+code",
-            "from_cods": "#indicator+from_cods",
             "id": "#country+hapi_id",
-            "has_hrp": "#indicator+has_hrp",
-            "in_gho": "#indicator+in_gho",
+            "has_hrp": "#indicator+has_hrp+bool",
+            "in_gho": "#indicator+in_gho+bool",
             "name": "#country+name"
         },
         "org": {
             "acronym": "#org+acronym",
-            "name": "#org+name"
+            "name": "#org+name",
+            "org_type_code": "#org+type+code",
+            "org_type_description": "#org+type+description"
+        },
+        "org_type": {
+            "code": "#org+type+code",
+            "description": "#org+type+description"
+        },
+        "resource": {
+            "hdx_id": "#meta+source+resource+hdx_id",
+            "dataset_hdx_id": "#meta+source+dataset+hdx_id",
+            "name": "#description+name",
+            "format": "#meta+format",
+            "update_date": "#date+hdx+updated",
+            "is_hxl": "#meta+hxl+bool",
+            "download_url": "#meta+download+url",
+            "dataset_hdx_stub": "#meta+source+dataset+hdx_stub",
+            "dataset_hdx_name": "#meta+source+dataset+hdx_name",
+            "dataset_title": "#meta+source+dataset+title",
+            "hdx_provider_stub": "#meta+source+provider_stub",
+            "hdx_provider_name": "#meta+source+provider_name"
         },
         "sector": {
             "code": "#sector+code",
             "name": "#sector+name"
+        },
+        "wfp_commodity": {
+            "code": "#item+commodity+code",
+            "category": "#item+commodity+category",
+            "name": "#item+commodity+name"
+        },
+        "wfp_market": {
+            "name": "#loc+market+name"
         }
     }
 }
