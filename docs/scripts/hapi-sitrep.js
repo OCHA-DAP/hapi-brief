@@ -1,4 +1,14 @@
-const PCODE = "SO1103";
+nunjucks.configure({
+    autoescape: true,
+    web: { async: true }
+});
+
+let searchParams = new URLSearchParams();
+
+let pcode = searchParams.get("admin2-code");
+if (!pcode) {
+    pcode = "AF0101";
+}
 
 const API_KEY = "SERYLWRhdmlkOm1lZ2dpbnNvbkB1bi5vcmc=";
 
@@ -27,6 +37,17 @@ const DATA = {
     country_name: 'Foolandia',
 }
 
+function get_param (name, default_value) {
+    let searchParams = new URLSearchParams(window.location.search);
+
+    let value = searchParams.get(name);
+    if (!value) {
+        value = default_value;
+    }
+    return value;
+}
+
+
 function redraw_html (error_message, html) {
     if (error_message) {
         alert(error_message);
@@ -36,22 +57,50 @@ function redraw_html (error_message, html) {
 }
 
 
-async function render_admin2 () {
+async function render_locations () {
     let data = { stop_list: STOP_LIST };
-    data.admin2 = await get_data("metadata", "admin2", "&code=" + PCODE);
-    data.admin2 = data.admin2[0];
-
-    data.idps = await get_data("affected-people", "idps", "&admin2_code=" + PCODE);
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin2_code=" + PCODE);
-    data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin2_code=" + PCODE);
-    data.population = await get_data("population-social", "population", "&admin2_code=" + PCODE);
+    data.locations = await get_data("metadata", "location", "&has_hrp=true");
 
     console.log(data);
-    nunjucks.configure({
-        autoescape: true,
-        web: { async: true }
-    });
-    nunjucks.render('templates/index.template.html', data, redraw_html);
+    nunjucks.render('templates/locations.template.html', data, redraw_html);
+}
+
+async function render_location () {
+    let pcode = get_param("code", "VEN");
+    let data = { stop_list: STOP_LIST };
+    data.location = await get_data("metadata", "location", "&code=" + pcode);
+    data.location = data.location[0];
+    data.admin1s = await get_data("metadata", "admin1", "&location_code=" + pcode);
+
+    console.log(data);
+    nunjucks.render('templates/location.template.html', data, redraw_html);
+}
+
+async function render_admin1 () {
+    let pcode = get_param("code");
+    console.log(pcode);
+    let data = { stop_list: STOP_LIST };
+    data.admin1 = await get_data("metadata", "admin1", "&code=" + pcode);
+    data.admin1 = data.admin1[0];
+    data.admin2s = await get_data("metadata", "admin2", "&admin1_code=" + pcode);
+
+    console.log(data);
+    nunjucks.render('templates/admin1.template.html', data, redraw_html);
+}
+
+async function render_admin2 () {
+    let pcode = get_param("code");
+    let data = { stop_list: STOP_LIST };
+    data.admin2 = await get_data("metadata", "admin2", "&code=" + pcode);
+    data.admin2 = data.admin2[0];
+
+    data.idps = await get_data("affected-people", "idps", "&admin2_code=" + pcode);
+    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin2_code=" + pcode);
+    data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin2_code=" + pcode);
+    data.population = await get_data("population-social", "population", "&admin2_code=" + pcode);
+
+    console.log(data);
+    nunjucks.render('templates/admin2.template.html', data, redraw_html);
 }
 
 async function get_data (category, subcategory, query) {
@@ -63,6 +112,5 @@ async function get_data (category, subcategory, query) {
 }
 
 
-window.addEventListener("load", render_admin2);
 
 

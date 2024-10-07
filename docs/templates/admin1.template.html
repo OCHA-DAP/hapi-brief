@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ admin1.name }}, {{ admin1.location_name }}</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="breadcrumbs">
+        <a href="locations.html">Locations</a>
+        <a href="location.html?code={{ admin1.location_code }}">{{ admin1.location_name }}</a>
+        <a>{{ admin1.name }}</a>
+      </nav>
+      <h1>{{ admin1.name }}, {{ admin1.location_name }} ({{ admin1.code }})</h1>
+    </header>
+    <main>
+      <section id="admin1">
+        <h2>Administrative level 2 subdivisions</h2>
+        {% for admin2 in admin2s %}
+        <p><a href="admin2.html?code={{ admin2.code }}">{{ admin2.name }}</a></p>
+        {% endfor %}
+      </section>
+    </main>
+  </body>
+</html>

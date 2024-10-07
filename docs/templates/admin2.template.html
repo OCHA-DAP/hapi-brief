@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>HAPI sitrep for {{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }}</title>
+    <title>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }}</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <header>
-      <h1>HAPI sitrep for {{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }} ({{ admin2.code }})</h1>
+      <nav class="breadcrumbs">
+        <a href="locations.html">Locations</a>
+        <a href="location.html?code={{ admin2.location_code }}">{{ admin2.location_name }}</a>
+        <a href="admin1.html?code={{ admin2.admin1_code }}">{{ admin2.admin1_name }}</a>
+        <a>{{ admin2.name }}</a>
+      </nav>
+      <h1>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }} ({{ admin2.code }})</h1>
       <nav>
         <a href="#population">Population demographics</a>
         <a href="#operational-presence">Organisations</a>
