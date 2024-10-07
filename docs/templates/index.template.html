@@ -6,11 +6,18 @@
   </head>
   <body>
     <header>
-      <h1>HAPI sitrep for {{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }}</h1>
+      <h1>HAPI sitrep for {{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }} ({{ admin2.code }})</h1>
+      <nav>
+        <a href="#population">Population demographics</a>
+        <a href="#operational-presence">Organisations</a>
+        <a href="#humanitarian-needs">Humanitarian needs</a>
+        <a href="#idps">IDPs</a>
+      </nav>
     </header>
     <main>
-      <section id="demographics">
-        <h2>Demographics for {{ admin2.name }}</h2>
+      <section id="population">
+        <h2>Population demographics for {{ admin2.name }}</h2>
+        {% if population|length %}
         <table>
           <thead>
             <tr>
@@ -35,9 +42,13 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <p>No data available.</p>
+        {% endif %}
       </section>
       <section id="operational-presence">
-        <h2>Orgs working in {{ admin2.name }}</h2>
+        <h2>Humanitarian organisations working in {{ admin2.name }}</h2>
+        {% if operational_presence|length %}
         <table>
           <thead>
             <tr>
@@ -62,9 +73,13 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <p>No data available.</p>
+        {% endif %}
       </section>
       <section id="humanitarian-needs">
-        <h2>Humanitarian needs assessment for {{ admin2.name }}</h2>
+        <h2>Humanitarian needs overview for {{ admin2.name }}</h2>
+        {% if humanitarian_needs|length %}
         <table>
           <thead>
             <tr>
@@ -89,9 +104,13 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <p>No data available.</p>
+        {% endif %}
       </section>
       <section id="idps">
         <h2>IDPs in {{ admin2.name }}</h2>
+        {% if idps|length %}
         <table>
           <thead>
             <tr>
@@ -116,6 +135,9 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <p>No data available.</p>
+        {% endif %}
       </section>
     </main>
   </body>
