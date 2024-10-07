@@ -1,7 +1,11 @@
 VENV=./venv
 ACTIVATE=$(VENV)/bin/activate
 
-DATA=	data/affected-people/refugees.csv \
+TIMESTAMP=data/timestamp
+
+DATA=	data/affected-people/idps.csv \
+	data/affected-people/refugees.csv \
+	data/affected-people/returnees.csv \
 	data/affected-people/humanitarian-needs.csv \
 	data/coordination-context/operational-presence.csv \
 	data/coordination-context/funding.csv \
@@ -27,8 +31,11 @@ SCRIPT=./download-hapi-subcategory.py
 
 all: $(DATA)
 
-data/%.csv: $(ACTIVATE)
-	. $(ACTIVATE) && python3 $(SCRIPT) `echo $* | tr '/' ' '` > data/$*.csv
+update-timestamp:
+	touch ${TIMESTAMP}
+
+data/%.csv: $(ACTIVATE) ${TIMESTAMP}
+	. $(ACTIVATE) && output=`mktemp` && (python3 $(SCRIPT) `echo $* | tr '/' ' '` > $$output) && mv $$output data/$*.csv
 
 $(ACTIVATE): requirements.txt
 	rm -rf venv

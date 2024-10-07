@@ -2,7 +2,7 @@
     "DEFAULT": {
         "admin1_code": "#adm1+code",
         "admin1_name": "#adm1+name",
-        "admin1_ref": "#adm1_hapi_id",
+        "admin1_ref": "#adm1+hapi_id",
         "admin2_code": "#adm2+code",
         "admin2_name": "#adm2+name",
         "admin2_ref": "#adm2+hapi_id",
@@ -10,6 +10,7 @@
         "asylum_location_ref": "#country+asylum+hapi_id",
         "asylum_location_code": "#country+asylum+code",
         "asylum_location_name": "#country+asylum+name",
+        "category": "#meta+category",
         "disabled_marker": "#indicator+disabled+bool",
         "from_cods": "#indicator+from_cods+bool",
         "gender": "#indicator+gender+code",
@@ -36,12 +37,14 @@
         "resource_hdx_id": "#meta+source+hdx+resource_id",
         "sector_code": "#sector+code",
         "sector_name": "#sector+name",
+        "subcategory": "#meta+subcategory",
         "title": "#description+title"
     },
     "affected-people": {
         "idps": {
             "reporting_round": "#indicator+dtm_round+num",
-            "assessment_type": "#indicator+dtm+type"
+            "assessment_type": "#indicator+dtm+type",
+            "operation": "#response+operation"
         },
         "refugees": {
         },
@@ -103,7 +106,7 @@
         },
         "poverty-rate": {
             "mpi": "#indicator+mpi",
-            "head_count_ratio": "#indicator+head_count_ration",
+            "headcount_ratio": "#indicator+head_count_ration",
             "intensity_of_deprivation": "#indicator+intensity_of_deprivation",
             "vulnerable_to_poverty": "#affected+vulnerable_to_poverty+num",
             "in_severe_poverty": "#affected+in_severe_poverty+num"
@@ -169,13 +172,14 @@
             "code": "#sector+code",
             "name": "#sector+name"
         },
-        "wfp_commodity": {
+        "wfp-commodity": {
             "code": "#item+commodity+code",
             "category": "#item+commodity+category",
             "name": "#item+commodity+name"
         },
-        "wfp_market": {
-            "name": "#loc+market+name"
+        "wfp-market": {
+            "name": "#loc+market+name",
+            "code": "#loc+market+code"
         }
     }
 }
