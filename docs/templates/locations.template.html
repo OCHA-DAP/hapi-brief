@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HAPI locations</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>HAPI locations</h1>
+    </header>
+    <main>
+      {% if locations|length %}
+      {% for location in locations %}
+      <p><a href="location.html?code={{ location.code }}">{{ location.name }}</a></p>
+      {% endfor %}
+      {% else %}
+      <p>No location data available.</p>
+      {% endif %}
+    </main>
+  </body>
+</html>
