@@ -11,12 +11,16 @@
       <h1>{{ location.name }}</h1>
     </header>
     <main>
+      {% set geo = location %}
+      {% include "templates/includes/operational-presence.template.html" %}
+    </main>
+    <aside>
       <section id="admin1">
         <h2>Administrative level 1 subdivisions</h2>
         {% for admin1 in admin1s %}
         <p><a href="admin1.html?code={{ admin1.code }}">{{ admin1.name }}</a></p>
         {% endfor %}
       </section>
-    </main>
+    </aside>
   </body>
 </html>

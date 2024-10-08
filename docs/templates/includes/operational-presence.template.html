@@ -1,0 +1,17 @@
+<section id="operational-presence">
+  <h2>Humanitarian organisations working in {{ geo.name }}</h2>
+  <p>
+    <b>Clusters:</b>
+    {% for sector in operational_presence.aggregate(["sector_name", "sector_code"]) %}
+    {{ sector.sector_name }},
+    {% endfor %}
+  </p>
+  <p>
+    <b>Organisations:</b>
+    {% for org in operational_presence.aggregate(["org_name", "org_acronym"]) %}
+    {{ org.org_name }},
+    {% endfor %}
+  </p>
+  {% set data=operational_presence %}
+  {% include "templates/includes/table.template.html" %}
+</section>

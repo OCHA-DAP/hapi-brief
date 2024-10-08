@@ -17,16 +17,13 @@
       </nav>
     </header>
     <main>
+      {% set geo = admin2 %}
       <section id="population">
         <h2>Population demographics for {{ admin2.name }}</h2>
         {% set data=population %}
         {% include "templates/includes/table.template.html" %}
       </section>
-      <section id="operational-presence">
-        <h2>Humanitarian organisations working in {{ admin2.name }}</h2>
-        {% set data=operational_presence %}
-        {% include "templates/includes/table.template.html" %}
-      </section>
+      {% include "templates/includes/operational-presence.template.html" %}
       <section id="humanitarian-needs">
         <h2>Humanitarian needs overview for {{ admin2.name }}</h2>
         {% set data=humanitarian_needs %}

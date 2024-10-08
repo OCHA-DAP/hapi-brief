@@ -11,7 +11,7 @@
     </header>
     <main>
       {% if locations|length %}
-      {% for location in locations %}
+      {% for location in locations.withoutRows("code", "AFG") %}
       <p><a href="location.html?code={{ location.code }}">{{ location.name }}</a></p>
       {% endfor %}
       {% else %}

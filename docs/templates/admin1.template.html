@@ -11,7 +11,9 @@
       <h1>{{ admin1.name }}, {{ admin1.location_name }} ({{ admin1.code }})</h1>
     </header>
     <main>
-      <section id="admin1">
+      {% set geo = admin1 %}
+      {% include "templates/includes/operational-presence.template.html" %}
+      <section id="admin2">
         <h2>Administrative level 2 subdivisions</h2>
         {% for admin2 in admin2s %}
         <p><a href="admin2.html?code={{ admin2.code }}">{{ admin2.name }}</a></p>
