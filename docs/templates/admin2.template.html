@@ -2,16 +2,12 @@
 <html>
   <head>
     <title>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }}</title>
-    <link rel="stylesheet" href="style.css" />
+    {% include "templates/includes/html-headers.template.html" %}
   </head>
   <body>
     <header>
-      <nav class="breadcrumbs">
-        <a href="locations.html">Locations</a>
-        <a href="location.html?code={{ admin2.location_code }}">{{ admin2.location_name }}</a>
-        <a href="admin1.html?code={{ admin2.admin1_code }}">{{ admin2.admin1_name }}</a>
-        <a>{{ admin2.name }}</a>
-      </nav>
+      {% set geo=admin2 %}
+      {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }} ({{ admin2.code }})</h1>
       <nav>
         <a href="#population">Population demographics</a>
@@ -23,127 +19,23 @@
     <main>
       <section id="population">
         <h2>Population demographics for {{ admin2.name }}</h2>
-        {% if population|length %}
-        <table>
-          <thead>
-            <tr>
-              {% for key, value in population[0] %}
-              {% if not key in stop_list %}
-              <th>
-                {{ key }}
-              </th>
-              {% endif %}
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in population %}
-            <tr>
-              {% for key, value in row %}
-              {% if not key in stop_list %}
-              <td>{{ value }}</td>
-              {% endif %}
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <p>No data available.</p>
-        {% endif %}
+        {% set data=population %}
+        {% include "templates/includes/table.template.html" %}
       </section>
       <section id="operational-presence">
         <h2>Humanitarian organisations working in {{ admin2.name }}</h2>
-        {% if operational_presence|length %}
-        <table>
-          <thead>
-            <tr>
-              {% for key, value in operational_presence[0] %}
-              {% if not key in stop_list %}
-              <th>
-                {{ key }}
-              </th>
-              {% endif %}
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in operational_presence %}
-            <tr>
-              {% for key, value in row %}
-              {% if not key in stop_list %}
-              <td>{{ value }}</td>
-              {% endif %}
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <p>No data available.</p>
-        {% endif %}
+        {% set data=operational_presence %}
+        {% include "templates/includes/table.template.html" %}
       </section>
       <section id="humanitarian-needs">
         <h2>Humanitarian needs overview for {{ admin2.name }}</h2>
-        {% if humanitarian_needs|length %}
-        <table>
-          <thead>
-            <tr>
-              {% for key, value in humanitarian_needs[0] %}
-              {% if not key in stop_list %}
-              <th>
-                {{ key }}
-              </th>
-              {% endif %}
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in humanitarian_needs %}
-            <tr>
-              {% for key, value in row %}
-              {% if not key in stop_list %}
-              <td>{{ value }}</td>
-              {% endif %}
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <p>No data available.</p>
-        {% endif %}
+        {% set data=humanitarian_needs %}
+        {% include "templates/includes/table.template.html" %}
       </section>
       <section id="idps">
         <h2>IDPs in {{ admin2.name }}</h2>
-        {% if idps|length %}
-        <table>
-          <thead>
-            <tr>
-              {% for key, value in idps[0] %}
-              {% if not key in stop_list %}
-              <th>
-                {{ key }}
-              </th>
-              {% endif %}
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in idps %}
-            <tr>
-              {% for key, value in row %}
-              {% if not key in stop_list %}
-              <td>{{ value }}</td>
-              {% endif %}
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% else %}
-        <p>No data available.</p>
-        {% endif %}
+        {% set data=idps %}
+        {% include "templates/includes/table.template.html" %}
       </section>
     </main>
   </body>

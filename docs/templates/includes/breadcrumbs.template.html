@@ -1,0 +1,22 @@
+<nav class="breadcrumbs">
+  {% if geo %}
+  <a href="/locations.html">Locations</a>
+  {% if geo.location_code %}
+  <a href="/location.html?code={{ geo.location_code }}">{{ geo.location_name }}</a>
+  {% if geo.admin1_code %}
+  <a href="/admin1.html?code={{ geo.admin1_code }}">{{ geo.admin1_name }}</a>
+  {% if geo.admin2_code %}
+  <a href="/admin2.html?code={{ geo.admin1_code }}">{{ geo.admin2_name }}</a>
+  {% else %}
+  <a>{{ geo.name }}</a>
+  {% endif %}
+  {% else %}
+  <a>{{ geo.name }}</a>
+  {% endif %}
+  {% else %}
+  <a>{{ geo.name }}</a>
+  {% endif %}
+  {% else %}
+  <a>Locations</a>
+  {% endif %}
+</nav>

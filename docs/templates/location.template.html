@@ -2,14 +2,12 @@
 <html>
   <head>
     <title>{{ location.name }}</title>
-    <link rel="stylesheet" href="style.css" />
+    {% include "templates/includes/html-headers.template.html" %}
   </head>
   <body>
     <header>
-      <nav class="breadcrumbs">
-        <a href="locations.html">Locations</a>
-        <a>{{ location.name }}</a>
-      </nav>
+      {% set geo=location %}
+      {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ location.name }}</h1>
     </header>
     <main>

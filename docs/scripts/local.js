@@ -57,49 +57,74 @@ function redraw_html (error_message, html) {
 }
 
 
+function process_availability (data) {
+    let result = {};
+    let level = 0;
+    data.forEach(row => {
+        let key = row.subcategory;
+        if (!(key in result)) {
+            result[key] = [];
+        }
+        if (row.admin2_code) {
+            result[key][2] = true;
+        } else if (row.admin1_code) {
+            result[key][1] = true;
+        } else {
+            result[key][0] = true;
+        }
+    });
+    return result;
+}
+
+
+/**
+ * Look up the list of HRP countries and render as HTML.
+ */
 async function render_locations () {
     let data = { stop_list: STOP_LIST };
     data.locations = await get_data("metadata", "location", "&has_hrp=true");
-
-    console.log(data);
     nunjucks.render('templates/locations.template.html', data, redraw_html);
 }
 
+
+/**
+ * Look up data for a location (country) page and render it as HTML.
+ */
 async function render_location () {
     let pcode = get_param("code", "VEN");
     let data = { stop_list: STOP_LIST };
     data.location = await get_data("metadata", "location", "&code=" + pcode);
     data.location = data.location[0];
     data.admin1s = await get_data("metadata", "admin1", "&location_code=" + pcode);
-
-    console.log(data);
     nunjucks.render('templates/location.template.html', data, redraw_html);
 }
 
+
+/**
+ * Look up data for an admin1 page and render it as HTML.
+ */
 async function render_admin1 () {
     let pcode = get_param("code");
-    console.log(pcode);
     let data = { stop_list: STOP_LIST };
     data.admin1 = await get_data("metadata", "admin1", "&code=" + pcode);
     data.admin1 = data.admin1[0];
     data.admin2s = await get_data("metadata", "admin2", "&admin1_code=" + pcode);
-
-    console.log(data);
     nunjucks.render('templates/admin1.template.html', data, redraw_html);
 }
 
+
+/**
+ * Look up data for an admin2 page and render it as HTML.
+ */
 async function render_admin2 () {
     let pcode = get_param("code");
     let data = { stop_list: STOP_LIST };
     data.admin2 = await get_data("metadata", "admin2", "&code=" + pcode);
     data.admin2 = data.admin2[0];
-
     data.idps = await get_data("affected-people", "idps", "&admin2_code=" + pcode);
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin2_code=" + pcode);
+    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&location_code=" + data.admin2.location_code);
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin2_code=" + pcode);
     data.population = await get_data("population-social", "population", "&admin2_code=" + pcode);
-
-    console.log(data);
     nunjucks.render('templates/admin2.template.html', data, redraw_html);
 }
 
@@ -110,7 +135,3 @@ async function get_data (category, subcategory, query) {
     let data = await response.json();
     return data.data;
 }
-
-
-
-
