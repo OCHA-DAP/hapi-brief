@@ -1,3 +1,5 @@
+const API_KEY = "SERYLWRhdmlkOm1lZ2dpbnNvbkB1bi5vcmc=";
+
 nunjucks.configure({
     autoescape: true,
     web: { async: true }
@@ -9,8 +11,6 @@ let pcode = searchParams.get("admin2-code");
 if (!pcode) {
     pcode = "AF0101";
 }
-
-const API_KEY = "SERYLWRhdmlkOm1lZ2dpbnNvbkB1bi5vcmc=";
 
 const HAPI_HOST = "hapi.humdata.org";
 

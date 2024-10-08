@@ -1,27 +1,25 @@
-Create static copies of HAPI data
-=================================
+HAPI instant briefing
+=====================
 
-Download data from [The Humanitarian API](https://hdx-hapi.readthedocs.io/en/latest/) (HAPI), maintained by the UN [Centre for Humanitarian Data](https://centre.humdata.org).
+Generate an instant humanitarian briefing for a country, admin1, or admin2 using the [The Humanitarian API](https://hdx-hapi.readthedocs.io/en/latest/) (HAPI), maintained by the UN [Centre for Humanitarian Data](https://centre.humdata.org).
+
+Live link: https://davidmegginson.github.io/hapi-brief/locations.html
 
 ## Setup
 
-Copy ``config.json.TEMPLATE`` to ``config.json`` and fill in the values.  You will need a HAPI API key from https://hapi.humdata.org/docs#/Utility/get_encoded_identifier_api_v1_encode_identifier_get
+1. Obtain a free HAPI API key from https://hapi.humdata.org/docs#/Generate%20App%20Identifier/get_encoded_identifier_api_v1_encode_app_identifier_get
+2. Edit ``docs/scripts/local.js`` and set the _API\_KEY_ constant to your own API key.
+3. Put the ``docs/` folder online.
 
 ## Usage
 
-The script will download the full contents of a HAPI endpoint, given a category and subcategory as arguments.  For example, to download the operational-presence endpoint in the context-coordination category, use
-
-    $ python3 download-hapi-subcategory.py context-coordination operational-presence > output.csv
+Choose a location (country), then follow through to an admin1 or admin2, as appropriate.
     
-## HXL support
-
-The output will contain [HXL](https://hxlstandard.org) hashtags, controlled by the map in ``inputs/hashtag-map.json`` .  The script looks first for a mapping under the specific category and subcategory, and if that fails, it looks for a mapping under "DEFAULT".  If no mapping is found, the HXL hashtag will be omitted for that column.
-
 ## Caveat
 
 This is a personal project.  The Centre for Humanitarian Data is not responsible for its accuracy or maintenance.
 
 
-Started 2024-08-01 by David Megginson
+Started 2024-10-07 by David Megginson
 
 Public domain: see [UNLICENSE.md](UNLICENSE.md) for details
