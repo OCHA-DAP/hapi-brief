@@ -17,9 +17,10 @@ class DFBase {
 
 }
 
-class DFFilterBase {
+class DFFilterBase extends DFBase {
 
     constructor(source) {
+        super();
         this.source = source;
     }
     
