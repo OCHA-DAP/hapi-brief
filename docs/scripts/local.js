@@ -53,6 +53,7 @@ async function render_location () {
     data.location = await get_data("metadata", "location", "&code=" + pcode);
     data.location = first(data.location);
     data.admin1s = await get_data("metadata", "admin1", "&location_code=" + pcode);
+    data.population = await get_data("population-social", "population", "&location_code=" + pcode + "&admin1_code=&admin2_code=");
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&location_code=" + pcode);
     nunjucks.render('templates/location.template.html', data, redraw_html);
 }
@@ -67,6 +68,7 @@ async function render_admin1 () {
     data.admin1 = await get_data("metadata", "admin1", "&code=" + pcode);
     data.admin1 = first(data.admin1);
     data.admin2s = await get_data("metadata", "admin2", "&admin1_code=" + pcode);
+    data.population = await get_data("population-social", "population", "&admin1_code=" + pcode + "&admin2_code=");
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin1_code=" + pcode);
     nunjucks.render('templates/admin1.template.html', data, redraw_html);
 }

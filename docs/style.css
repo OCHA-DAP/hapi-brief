@@ -1,3 +1,10 @@
 table, th, td {
     border: solid 1px;
 }
+
+
+aside {
+    float: right;
+    width: 20em;
+    padding: 1ex;
+}

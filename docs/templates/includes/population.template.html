@@ -1,0 +1,5 @@
+<section id="population">
+  <h2>Population demographics for {{ geo.name }}</h2>
+  {% set data = population.withRows('age_range', 'all') %}
+  {% include "templates/includes/table.template.html" %}
+</section>

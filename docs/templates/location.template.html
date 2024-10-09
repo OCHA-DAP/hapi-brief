@@ -10,10 +10,6 @@
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ location.name }}</h1>
     </header>
-    <main>
-      {% set geo = location %}
-      {% include "templates/includes/operational-presence.template.html" %}
-    </main>
     <aside>
       <section id="admin1">
         <h2>Administrative level 1 subdivisions</h2>
@@ -22,5 +18,10 @@
         {% endfor %}
       </section>
     </aside>
+    <main>
+      {% set geo = location %}
+      {% include "templates/includes/population.template.html" %}
+      {% include "templates/includes/operational-presence.template.html" %}
+    </main>
   </body>
 </html>
