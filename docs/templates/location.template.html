@@ -20,8 +20,22 @@
     </aside>
     <main>
       {% set geo = location %}
-      {% include "templates/includes/population.template.html" %}
-      {% include "templates/includes/operational-presence.template.html" %}
+      <p>
+        {% set national_population = population.withRows("admin1_code", null).withRows("admin2_code", null).withRows("age_range", "all").cache() %}
+        <b>Population:</b>
+        {{ national_population.withRows("gender", "all").first().population }}
+        (female
+        {{ national_population.withRows("gender", "f").first().population }})
+        (male
+        {{ national_population.withRows("gender", "m").first().population }})
+      </p>
+      {% for sector in operational_presence.aggregate(["sector_name", "sector_code"]) %}
+      <section id="{{ sector.sector_code }}">
+        <h2>{{ sector.sector_name }}</h2>
+        {% set data=operational_presence %}
+        {% include "templates/includes/table.template.html" %}
+      </section>
+      {% endfor %}
     </main>
   </body>
 </html>

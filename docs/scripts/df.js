@@ -1,58 +1,139 @@
-class DFBase {
+////////////////////////////////////////////////////////////////////////
+// Dynamic streaming data filters.
+//
+// Started 2024-10 by David Megginson
+// Public Domain
+////////////////////////////////////////////////////////////////////////
 
-    constructor() {
-    }
 
-    withRows (key, value) {
-        return new DFSelect(this, row => { return row[key] == value; });
-    }
-    
-    withoutRows (key, value) {
-        return new DFSelect(this, row => { return row[key] != value; });
-    }
-
-    aggregate (keys, dependent) {
-        return new DFAggregate(this, keys, dependent);
-    }
-
-}
-
-class DFFilterBase extends DFBase {
-
-    constructor(source) {
-        super();
-        this.source = source;
-    }
-    
-}
+// Pseudo-namespace (change into module later)
+let DF = {};
 
 
 /**
- * Wrap a raw array of JSON objects.
+ * Basic class to wrap an array.
+ * Defines helper methods for derived classes.
  */
-class DFRaw extends DFBase {
+DF.Data = class {
 
-    constructor(raw_data) {
-        super();
-        this.raw_data = raw_data;
+    constructor(source) {
+        this.source = source;
     }
 
+
+    //
+    // Accessors
+    //
+
+
+    /**
+     * Get a row by position.
+     *
+     * -1 means the last element.
+     */
+    get (n) {
+        let row = null;
+        let i = 0;
+        for (row of this) {
+            if (n == i++) {
+                return row;
+            }
+        }
+        if (n == -1) {
+            return row;
+        } else {
+            return null;
+        }
+    }
+
+
+    // Return the first row in the dataset.
+    first () {
+        return this.get(0);
+    }
+
+
+    // Return the last row in the dataset.
+    last () {
+        return this.get(-1);
+    }
+
+    // Return the number of rows in the dataset.
+    length () {
+        let i = 0;
+        for (row of this) {
+            i++;
+        }
+        return i;
+    }
+
+
+    //
+    // Streaming filters
+    //
+
+    // Make a static snapshot of the stream at this point
+    cache () {
+        return new DF.Cache(this);
+    }
+
+    // Return all the rows where key = value
+    withRows (key, value) {
+        return new DF.Select(this, row => { return row[key] == value; });
+    }
+
+     // Return all the rows where key != value
+    withoutRows (key, value) {
+        return new DF.Select(this, row => { return row[key] != value; });
+    }
+
+    // Aggregate rows for the keys specified
+    aggregate (keys, dependent) {
+        return new DF.Aggregate(this, keys, dependent);
+    }
+
+    /**
+     * Assumes a basic array. Override in derived classes.
+     */
     [Symbol.iterator]() {
-
-        let index = -1;
-        let data = this.raw_data;
-
-        return {
-            next: () => ({value: data[++index], done: !(index in data)})
-        };
+        return this.source.values();
     }
+
+}
+
+/**
+ * Abstract base class for caching classes.
+ */
+DF.Cache = class extends DF.Data {
+
+    constructor(source) {
+        super(source);
+        this.cached = null;
+    }
+
+    collect () {
+        let rows = [];
+        for (var row of this.source) {
+            rows.push(row);
+        }
+        return rows;
+    }
+    
+    [Symbol.iterator]() {
+        if (this.cached === null) {
+            this.cached = this.collect();
+            this.source = null;
+        }
+        return this.cached[Symbol.iterator]();
+    }
+    
 }
 
 
 /**
  * Return only rows that pass the test supplied.
  */
-class DFSelect extends DFFilterBase {
+DF.Select = class extends DF.Data {
 
     constructor(source, test) {
         super(source);
@@ -81,7 +162,11 @@ class DFSelect extends DFFilterBase {
     
 }
 
-class DFAggregate extends DFFilterBase {
+
+/**
+ * Aggregate a dependent variable for a set of independent variables.
+ */
+DF.Aggregate = class extends DF.Cache {
 
     constructor(source, keys, dependent) {
         super(source);
@@ -89,7 +174,7 @@ class DFAggregate extends DFFilterBase {
         this.dependent = dependent;
     }
 
-    aggregate() {
+    collect() {
         let accumulator = {};
         let tuples = [];
 
@@ -134,10 +219,4 @@ class DFAggregate extends DFFilterBase {
         return tuples;
     }
 
-    [Symbol.iterator]() {
-        let tuples = this.aggregate();
-        return tuples[Symbol.iterator]();
-    }
-    
-    
 }

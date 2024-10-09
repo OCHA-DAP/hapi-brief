@@ -3,7 +3,7 @@
   <table>
     <thead>
       <tr>
-        {% for key, value in data[0] %}
+        {% for key, value in data.first() %}
         {% if not key in stop_list %}
         <th>
           {{ key }}

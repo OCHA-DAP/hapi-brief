@@ -1,10 +1,12 @@
 const API_KEY = "SERYLWRhdmlkOm1lZ2dpbnNvbkB1bi5vcmc=";
 
+
+// HTTP GET parameters
 const searchParams = new URLSearchParams(window.location.search);
 
 const HAPI_HOST = "hapi.humdata.org";
 
-const PAGE_SIZE = 1000;
+const PAGE_SIZE = 10000;
 
 const STOP_LIST = [
     'location_ref',
@@ -21,13 +23,8 @@ const STOP_LIST = [
     'org_type_code',
 ];
 
-const DATA = {
-    admin2_name: 'Subdistrict 01',
-    admin1_name: 'District A',
-    country_name: 'Foolandia',
-}
 
-
+// Set up the templating system.
 nunjucks.configure({
     autoescape: true,
     web: { async: true }
@@ -51,7 +48,7 @@ async function render_location () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
     data.location = await get_data("metadata", "location", "&code=" + pcode);
-    data.location = first(data.location);
+    data.location = data.location.first();
     data.admin1s = await get_data("metadata", "admin1", "&location_code=" + pcode);
     data.population = await get_data("population-social", "population", "&location_code=" + pcode + "&admin1_code=&admin2_code=");
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&location_code=" + pcode);
@@ -65,11 +62,20 @@ async function render_location () {
 async function render_admin1 () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
+
     data.admin1 = await get_data("metadata", "admin1", "&code=" + pcode);
-    data.admin1 = first(data.admin1);
+    data.admin1 = data.admin1.first();
+
     data.admin2s = await get_data("metadata", "admin2", "&admin1_code=" + pcode);
-    data.population = await get_data("population-social", "population", "&admin1_code=" + pcode + "&admin2_code=");
+
+    data.population = await get_data("population-social", "population", "&admin_level=1&admin1_code=" + pcode);
+
+    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin_level=1&admin1_code=" + pcode);
+
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin1_code=" + pcode);
+    
+    data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+
     nunjucks.render('templates/admin1.template.html', data, redraw_html);
 }
 
@@ -81,16 +87,41 @@ async function render_admin2 () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
     data.admin2 = await get_data("metadata", "admin2", "&code=" + pcode);
-    data.admin2 = first(data.admin2);
+    data.admin2 = data.admin2.first();
     data.idps = await get_data("affected-people", "idps", "&admin2_code=" + pcode);
     data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&location_code=" + data.admin2.location_code);
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin2_code=" + pcode);
-    for (var row of data.operational_presence.aggregate(['sector_name', 'sector_code'])) {
-        console.log(row);
-    }
     data.population = await get_data("population-social", "population", "&admin2_code=" + pcode);
     nunjucks.render('templates/admin2.template.html', data, redraw_html);
 }
+
+
+//
+// Data-preparation functions
+//
+
+
+// Merge any sectors from operational presence and humanitarian needs
+function get_sectors (datasets) {
+    let sector_map = {};
+    let result = [];
+    for (var data of datasets) {
+        if (data) {
+            for (var row of data.aggregate(['sector_name', 'sector_code'])) {
+                sector_map[row.sector_code] = row.sector_name;
+            }
+        }
+    }
+    for (let [key, value] of Object.entries(sector_map)) {
+        result.push({ code: key, name: value });
+    }
+    return result;
+}
+
+
+//
+// Rendering functions
+//
 
 
 /**
@@ -104,19 +135,24 @@ function redraw_html (error_message, html) {
     }
 }
 
-function first (values) {
-    for (var value of values) {
-        return value;
-    }
-}
-
 
 /**
  * Download data from HAPI.
  */
 async function get_data (category, subcategory, query) {
-    let url = "https://hapi.humdata.org/api/v1/" + category + "/" + subcategory + "?app_identifier=" + API_KEY + query;
+    let result = [];
+    let finished = false;
+    let offset = 0;
+    while (!finished) {
+        let url = "https://hapi.humdata.org/api/v1/" + category + "/" + subcategory + "?app_identifier=" + API_KEY + "&limit=" + PAGE_SIZE + "&offset=" + offset + query;
     let response = await fetch(url);
-    let data = await response.json();
-    return new DFRaw(data.data);
+        let data = await response.json();
+        result.push(...data.data);
+        if (data.data.length < PAGE_SIZE) {
+            finished = true;
+        } else {
+            offset += PAGE_SIZE;
+        }
+    }
+    return new DF.Data(result);
 }

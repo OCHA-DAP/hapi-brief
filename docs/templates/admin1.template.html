@@ -18,8 +18,32 @@
     </aside>
     <main>
       {% set geo = admin1 %}
-      {% include "templates/includes/population.template.html" %}
-      {% include "templates/includes/operational-presence.template.html" %}
+      <p>
+        {% set admin1_population = population.withRows("admin1_code", geo.code).withRows("admin2_code", null).withRows("age_range", "all").cache() %}
+        <b>Total population:</b>
+        {{ admin1_population.withRows("gender", "all").first().population }}
+        (female
+        {{ admin1_population.withRows("gender", "f").first().population }},
+        male
+        {{ admin1_population.withRows("gender", "m").first().population }})
+      </p>
+      {% for sector in sectors|sort %}
+      <section id="{{ sector.code }}">
+        <h2>{{ sector.name }}</h2>
+        {% set data = humanitarian_needs.withRows("sector_code", sector.code).withRows("age_range", "ALL").withRows("population_group", "all") %}
+        {% for row in data %}
+        <p><b>{{ row.population_status }}</b> {{ row.population }}</b>
+        {% endfor %}
+        <section id="{{ sector.name }}.orgs">
+          <h3>Organisations involved in the {{ sector.name }} response in {{ geo.name }}</h3>
+          <p>
+            {% for row in operational_presence.aggregate(["org_acronym", "org_name"]) %}
+            {{ row.org_name }}<br />
+            {% endfor %}
+          </p>
+        </section>
+      </section>
+      {% endfor %}
     </main>
   </body>
 </html>
