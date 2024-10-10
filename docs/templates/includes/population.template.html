@@ -1,5 +1,19 @@
-<section id="population">
-  <h2>Population demographics for {{ geo.name }}</h2>
-  {% set data = population.withRows('age_range', 'all').withRows('gender', 'all') %}
-  {% include "templates/includes/table.template.html" %}
-</section>
+{% if population.length() > 0 %}
+{% set population_date = population.max("reference_period_start") %}
+{% set latest_population = population.withRows("reference_period_start", population_date) %}
+<div class="infobox">
+  <div class="key-figure">
+    <span class="date">{{ population_date | truncate(4, true, "") }}</span>
+    <span class="label">Total population</span>
+    <span class="figure">{{ latest_population.withRows("gender", "all").last().population | nfmt }}</span>
+    <div class="supplemental-figure">
+      {{ latest_population.withRows("gender", "f").last().population | nfmt }}
+      <i class="label">female</i>
+    </div>
+    <div class="supplemental-figure">
+      {{ latest_population.withRows("gender", "m").last().population | nfmt }}
+      <i class="label">male</i>
+    </div>
+  </div>
+</div>
+{% endif %}

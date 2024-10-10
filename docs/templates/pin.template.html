@@ -1,0 +1,7 @@
+{% if humanitarian_needs.length().withRows("sector_code", "Intersectoral") > 0 %}
+<div class="infobox">
+{% for row in humanitarian_needs..withRows("sector_code", "Intersectoral") %}
+  <
+{% endfor %}
+</div>
+{% endif %}

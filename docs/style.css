@@ -1,3 +1,7 @@
+body {
+    font-family: Helvetica, Ariel, sanserif;
+}
+
 table, th, td {
     border: solid 1px;
 }
@@ -8,3 +12,42 @@ aside {
     width: 20em;
     padding: 1ex;
 }
+
+.infoboxes {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.infobox {
+    width: 15rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: #eeeeff;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+}
+
+.key-figure .label {
+    display: block;
+    font-size: 80%;
+}
+
+.key-figure .figure {
+    font-size: 144%;
+}
+
+.key-figure .date {
+    display: inline-block;
+    font-size: 80%;
+    float: right;
+}
+
+.supplemental-figure {
+    font-size: 80%;
+    margin-left: 1rem;
+}
+
+.supplemental-figure .label {
+    display: inline;
+}
+

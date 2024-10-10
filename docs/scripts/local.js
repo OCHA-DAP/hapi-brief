@@ -25,10 +25,14 @@ const STOP_LIST = [
 
 
 // Set up the templating system.
-nunjucks.configure({
+let nunjucks_env = nunjucks.configure({
     autoescape: true,
     web: { async: true }
 });
+
+nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
+
+
 
 
 /**
@@ -47,11 +51,29 @@ async function render_locations () {
 async function render_location () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
+
     data.location = await get_data("metadata", "location", "&code=" + pcode);
     data.location = data.location.first();
+    data.geo = data.location;
+    
     data.admin1s = await get_data("metadata", "admin1", "&location_code=" + pcode);
-    data.population = await get_data("population-social", "population", "&location_code=" + pcode + "&admin1_code=&admin2_code=");
+
+    data.population = await get_data("population-social", "population", "&admin_level=0&location_code=" + pcode);
+
+    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin_level=0&location_code=" + pcode);
+
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&location_code=" + pcode);
+
+    data.funding = await get_data("coordination-context", "funding", "&location_code=" + pcode);
+
+    data.refugees = await get_data("affected-people", "refugees", "&asylum_location_code=" + pcode);
+
+    data.returnees = await get_data("affected-people", "returnees", "&asylum_location_code=" + pcode);
+
+    data.idps = await get_data("affected-people", "idps", "&admin_level=0&location_code=" + pcode);
+
+    data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+
     nunjucks.render('templates/location.template.html', data, redraw_html);
 }
 
@@ -65,6 +87,7 @@ async function render_admin1 () {
 
     data.admin1 = await get_data("metadata", "admin1", "&code=" + pcode);
     data.admin1 = data.admin1.first();
+    data.geo = data.admin1;
 
     data.admin2s = await get_data("metadata", "admin2", "&admin1_code=" + pcode);
 
@@ -74,6 +97,8 @@ async function render_admin1 () {
 
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin1_code=" + pcode);
     
+    data.idps = await get_data("affected-people", "idps", "&admin1_code=" + pcode);
+
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
 
     nunjucks.render('templates/admin1.template.html', data, redraw_html);
@@ -86,12 +111,21 @@ async function render_admin1 () {
 async function render_admin2 () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
+
     data.admin2 = await get_data("metadata", "admin2", "&code=" + pcode);
     data.admin2 = data.admin2.first();
-    data.idps = await get_data("affected-people", "idps", "&admin2_code=" + pcode);
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&location_code=" + data.admin2.location_code);
+    data.geo = data.admin2;
+    
+    data.population = await get_data("population-social", "population", "&admin_level=2&admin2_code=" + pcode);
+
+    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin_level=2&admin2_code=" + pcode);
+
     data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin2_code=" + pcode);
-    data.population = await get_data("population-social", "population", "&admin2_code=" + pcode);
+
+    data.idps = await get_data("affected-people", "idps", "&admin2_code=" + pcode);
+
+    data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+
     nunjucks.render('templates/admin2.template.html', data, redraw_html);
 }
 

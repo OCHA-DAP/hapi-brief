@@ -22,7 +22,66 @@ DF.Data = class {
 
 
     //
-    // Accessors
+    // Value aggregators
+    //
+
+    sum (key) {
+        let result = null;
+        for (let row of this) {
+            result += row[key];
+        }
+        return result;
+    }
+
+    min (key) {
+        let result = null;
+        for (let row of this) {
+            if (row[key] !== null) {
+                if (result === null || row[key] < result) {
+                    result = row[key];
+                }
+            }
+        }
+        return result;
+    }
+
+    max (key) {
+        let result = null;
+        for (let row of this) {
+            if (row[key] !== null) {
+                if (result === null || row[key] > result) {
+                    result = row[key];
+                }
+            }
+        }
+        return result;
+    }
+
+    average (key) {
+        let result = null;
+        let count = 0;
+        for (let row of this) {
+            if (row[key] !== null) {
+                result += (row[key] / ++count);
+            }
+        }
+        return result;
+    }
+
+    stddev (key) {
+    }
+
+    values (key) {
+        let values = new Set();
+        for (let row of this) {
+            values.add(row[key]);
+        }
+        return Array.from(values);
+    }
+    
+
+    //
+    // Row accessors
     //
 
 
@@ -61,7 +120,7 @@ DF.Data = class {
     // Return the number of rows in the dataset.
     length () {
         let i = 0;
-        for (row of this) {
+        for (var row of this) {
             i++;
         }
         return i;

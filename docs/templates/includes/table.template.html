@@ -1,30 +1,24 @@
-<div>
-  {% if data|length %}
-  <table>
-    <thead>
-      <tr>
-        {% for key, value in data.first() %}
-        {% if not key in stop_list %}
-        <th>
-          {{ key }}
-        </th>
-        {% endif %}
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in data %}
-      <tr>
-        {% for key, value in row %}
-        {% if not key in stop_list %}
-        <td>{{ value }}</td>
-        {% endif %}
-        {% endfor %}
-      </tr>
+<table>
+  <thead>
+    <tr>
+      {% for key, value in data.first() %}
+      {% if not key in stop_list %}
+      <th>
+        {{ key }}
+      </th>
+      {% endif %}
       {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p>No data available.</p>
-  {% endif %}
-</div>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in data %}
+    <tr>
+      {% for key, value in row %}
+      {% if not key in stop_list %}
+      <td>{{ value }}</td>
+      {% endif %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

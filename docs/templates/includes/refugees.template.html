@@ -1,0 +1,19 @@
+{% if refugees.length() > 0 %}
+{% set refugee_date = refugees.max("reference_period_start") %}
+{% set latest_refugees = refugees.withRows("reference_period_start", refugee_date).cache() %}
+<div class="infobox">
+  <div class="key-figure">
+    <span class="date">{{ refugee_date | truncate(4, true, "") }}</span>
+    <span class="label">Refugees</span>
+    <span class="figure">{{ latest_refugees.withRows("age_range", "all").withRows("gender", "all").sum("population") | nfmt }}</span>
+    <div class="supplemental-figure">
+      {{ latest_refugees.withRows("gender", "f").sum("population") | nfmt }}
+      <span class="label">female</span>
+    </div>
+    <div class="supplemental-figure">
+      {{ latest_refugees.withRows("gender", "m").sum("population") | nfmt }}
+      <span class="label">male</span>
+    </div>
+  </div>
+</div>
+{% endif %}
