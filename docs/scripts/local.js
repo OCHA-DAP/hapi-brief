@@ -40,7 +40,17 @@ nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
  */
 async function render_locations () {
     let data = { stop_list: STOP_LIST };
-    data.locations = await get_data("metadata", "location", "&has_hrp=true");
+    data.filter = searchParams.get("filter");
+    if (!data.filter) {
+        data.filter = "hrp";
+    }
+    let query = "";
+    if (data.filter == "hrp") {
+        query = "&has_hrp=true";
+    } else if (data.filter == "gho") {
+        query = "&in_gho=true";
+    }
+    data.locations = await get_data("metadata", "location", query);
     nunjucks.render('templates/locations.template.html', data, redraw_html);
 }
 
@@ -72,7 +82,11 @@ async function render_location () {
 
     data.idps = await get_data("affected-people", "idps", "&admin_level=0&location_code=" + pcode);
 
+    data.national_risk = await get_data("coordination-context", "national-risk", "&location_code=" + pcode);
+    console.log(data.national_risk);
+
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+
 
     nunjucks.render('templates/location.template.html', data, redraw_html);
 }

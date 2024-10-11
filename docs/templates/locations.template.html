@@ -8,6 +8,15 @@
     <header>
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>HAPI locations</h1>
+      <form target="">
+        <b>Filter locations:</b>
+        {% for f in [["hrp", "HRP"], ["gho", "GHO"], ["all", "all"]] %}
+        <label>
+          {{ f[1] }}
+          <input type="radio" name="filter" value="{{ f[0] }}"{% if filter == f[0] %} checked="checked"{% endif %} onclick="this.form.submit()" />
+        </label>
+        {% endfor %}
+      </form>
     </header>
     <main>
       {% if locations|length %}

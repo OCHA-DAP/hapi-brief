@@ -78,6 +78,15 @@ DF.Data = class {
         }
         return Array.from(values);
     }
+
+    contains (key, value) {
+        for (let row of this) {
+            if (row[key] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
     
 
     //

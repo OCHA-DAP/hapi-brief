@@ -5,17 +5,18 @@
 {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_start", pin_date).cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ latest_pin.withRows("gender", "all").last().reference_period_start | truncate(7, true, "") }}</span>
+    <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
     <span class="label">{{ status[1] }}</span>
     <span class="figure">{{ latest_pin.withRows("gender", "all").last().population | nfmt }}</span>
+    {% for gender in [["f", "female"], ["m", "male"]] %}
+    {% set population = latest_pin.withRows("gender", gender[0]).last().population %}
+    {% if population > 0 %}
     <div class="supplemental-figure">
-      {{ latest_pin.withRows("gender", "f").last().population | nfmt }}
-      <span class="label">female</span>
+      <span class="label">{{ gender[1] }}</span>
+      {{ population | nfmt }}
     </div>
-    <div class="supplemental-figure">
-      {{ latest_pin.withRows("gender", "m").last().population | nfmt }}
-      <span class="label">male</span>
-    </div>
+    {% endif %}
+    {% endfor %}
   </div>
 </div>
 {% endfor %}

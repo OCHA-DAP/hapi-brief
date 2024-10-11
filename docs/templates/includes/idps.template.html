@@ -7,14 +7,18 @@
     <span class="date">{{ idps_date | truncate(7, true, "") }}</span>
     <span class="label">IDPs</span>
     <span class="figure">{{ latest_idps.withRows("gender", "all").last().population | nfmt }}</span>
+    {% if latest_idps.contains("gender", "f") %}
     <div class="supplemental-figure">
       {{ latest_idps.withRows("gender", "f").sum("population") | nfmt }}
       <span class="label">female</span>
     </div>
+    {% endif %}
+    {% if latest_idps.contains("gender", "m") %}
     <div class="supplemental-figure">
       {{ latest_idps.withRows("gender", "m").sum("population") | nfmt }}
       <span class="label">male</span>
     </div>
+    {% endif %}
   </div>
 </div>
 

@@ -13,6 +13,18 @@ aside {
     padding: 1ex;
 }
 
+.breadcrumbs {
+    font-size: 80%;
+}
+
+.breadcrumbs a {
+    text-decoration: none;
+}
+
+.breadcrumbs a::after {
+    content: " > ";
+}
+
 .infoboxes {
     display: flex;
     flex-wrap: wrap;
@@ -51,3 +63,7 @@ aside {
     display: inline;
 }
 
+label {
+    display: inline-block;
+    margin: 0 2em;
+}

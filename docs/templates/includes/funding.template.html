@@ -1,18 +1,23 @@
 {% if funding.length() > 0 %}
-{% set funding_date = funding.max("reference_period_start") %}
-{% for appeal in funding.withRows("reference_period_start", funding_date) %}
-<div class="infobox">
-  <div class="key-figure">
-    <b class="label"><cite>{{ appeal.appeal_name }}</cite></b>
-    <div class="supplemental-figure">
-      <i class="label">Required</i>
-      USD {{ appeal.requirements_usd | nfmt }}
-    </div>
-    <div class="supplemental-figure">
-      <i class="label">Funded</i>
-      USD {{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)
+<section id="funding">
+  <h2>Appeals and funding</h2>
+  <div class="infoboxes">
+  {% set funding_date = funding.max("reference_period_start") %}
+  {% for appeal in funding.withRows("reference_period_start", funding_date) %}
+  <div class="infobox">
+    <div class="key-figure">
+      <b class="label"><cite>{{ appeal.appeal_name }}</cite></b>
+      <div class="supplemental-figure">
+        <i class="label">Required</i>
+        USD {{ appeal.requirements_usd | nfmt }}
+      </div>
+      <div class="supplemental-figure">
+        <i class="label">Funded</i>
+        USD {{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)
+      </div>
     </div>
   </div>
-</div>
-{% endfor %}
+  {% endfor %}
+  </div>
+</section>
 {% endif %}

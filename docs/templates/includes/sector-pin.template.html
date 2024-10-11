@@ -1,0 +1,26 @@
+<div>
+  {{ sector.code }}
+  {% if humanitarian_needs.withRows("sector_code", sector.code).length() > 0 %}
+  {% set filtered_pin = humanitarian_needs.withRows("sector_code", sector.code).withRows("age_range", "ALL").cache() %}
+  {% for status in [["INN", "Total in need"], ["TGT", "Total targeted"]] %}
+  {% set pin_date = filtered_pin.max("reference_period_start") %}
+  {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_start", pin_date).cache() %}
+  <div class="infobox">
+    <div class="key-figure">
+      <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
+      <span class="label">{{ status[1] }}</span>
+      <span class="figure">{{ latest_pin.withRows("gender", "all").last().population | nfmt }}</span>
+      {% for gender in [["f", "female"], ["m", "male"]] %}
+      {% set population = latest_pin.withRows("gender", gender[0]).last().population %}
+      {% if population > 0 %}
+      <div class="supplemental-figure">
+        <span class="label">{{ gender[1] }}</span>
+        {{ population | nfmt }}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+</div>

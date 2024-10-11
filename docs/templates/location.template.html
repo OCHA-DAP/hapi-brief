@@ -19,46 +19,86 @@
       </section>
     </aside>
     <main>
+      <section id="overview">
+        <h2>Topline figures</h2>
+        
+        <div class="infoboxes">
 
-      <section class="infoboxes">
+          {% include "templates/includes/population.template.html" %}
 
-        {% include "templates/includes/population.template.html" %}
+          {% include "templates/includes/pin.template.html" %}
 
-        {% include "templates/includes/pin.template.html" %}
+          {% include "templates/includes/refugees.template.html" %}
 
-        {% include "templates/includes/refugees.template.html" %}
+          {% include "templates/includes/returnees.template.html" %}
 
-        {% include "templates/includes/returnees.template.html" %}
+          {% include "templates/includes/idps.template.html" %}
 
-        {% include "templates/includes/idps.template.html" %}
+          {% include "templates/includes/national-risk.template.html" %}
 
-        {% include "templates/includes/funding.template.html" %}
+        </div>
 
       </section>
 
-      {% for sector in sectors %}
-      <section id="{{ sector.code }}">
-        <h2>{{ sector.name }}</h2>
-        {% set data = humanitarian_needs.withRows("sector_code", sector.code).withRows("age_range", "ALL") %}
-        {% for row in data %}
-        <p><b>{{ row.population_status }} ({{ row.population_group }}):</b> {{ row.population }}</p>
-        {% endfor %}
-        <section id="{{ sector.name }}.orgs">
-          <h3>{{ sector.name }} response in {{ geo.name }}</h3>
-          {% set orgs = operational_presence.withRows("sector_code", sector.code).aggregate(["org_acronym", "org_name"]).cache() %}
-          {% if orgs.length() > 0 %}
-          <p>{{ orgs.length() }} humanitarian organisation(s) known to be working in {{ location.name }} in {{ sector.name }}:</p>
-          <ul>
-            {% for org in orgs %}
-            <li>{{ org.org_name }}</li>
-            {% endfor %}
-          </ul>
-          {% else %}
-          <p>No response information available for {{ location.name }}.</p>
+      {% include "templates/includes/funding.template.html" %}
+
+      <section id="sectors">
+        <h2>Sectors</h2>
+        {% for sector in sectors %}
+        {% if sector.code != "Intersectoral" %}
+        <section id="{{ sector.code }}">
+          <h3>{{ sector.name }}</h3>
+
+          <div class="infoboxes">
+          {% set filtered_pin = humanitarian_needs.withRows("sector_code", sector.code).withRows("age_range", "ALL").cache() %}
+          {% for group in humanitarian_needs.values("population_group") %}
+          {% for status in [["INN", "in need"], ["TGT", "targeted"]] %}
+          {% set pin_date = filtered_pin.max("reference_period_start") %}
+          {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("population_group", group).withRows("reference_period_start", pin_date).cache() %}
+          {% if latest_pin.withRows("gender", "all").sum("population") > 0 %}
+          <div class="infobox">
+            <div class="key-figure">
+              <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
+              <span class="label">{{ group if group != "all" else "Total" }} {{ status[1] }}</span>
+              <span class="figure">{{ latest_pin.withRows("gender", "all").sum("population") | nfmt }}</span>
+              {% for gender in [["f", "female"], ["m", "male"]] %}
+              {% set population = latest_pin.withRows("gender", gender[0]).sum("population") %}
+              {% if population > 0 %}
+              <div class="supplemental-figure">
+                <span class="label">{{ gender[1] }}</span>
+                {{ population | nfmt }}
+              </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
           {% endif %}
+          {% endfor %}
+          {% endfor %}
+          {% set op_sector = operational_presence.withRows("sector_code", sector.code).cache() %}
+          {% set op_date = op_sector.max("reference_period_start") %}
+          {% set op_filtered = op_sector.withRows("reference_period_start", op_date) %}
+          {% if op_filtered.length() > 0 %}
+          <div class="infobox">
+            <div class="key-figure">
+              <span class="date">{{ op_date | truncate(7, true, "") }}</span>
+              <span class="label">Organisations responding</span>
+              <span class="figure">{{ op_filtered.length() | nfmt }}</span>
+            </div>
+            {% for type in op_filtered.values("org_type_description") | sort %}
+            <div class="supplemental-figure">
+              <span class="figure">{{ op_filtered.withRows("org_type_description", type).length() | nfmt }}</span>
+              <span class="label">{{ type }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          </div>
+
         </section>
+        {% endif %}
+        {% endfor %}
       </section>
-      {% endfor %}
     </main>
   </body>
 </html>
