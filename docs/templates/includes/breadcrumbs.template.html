@@ -6,9 +6,11 @@
   {% if geo.admin1_code %}
   <a href="admin1.html?code={{ geo.admin1_code }}">{{ geo.admin1_name }}</a>
   {% if geo.admin2_code %}
-  <a href="admin2.html?code={{ geo.admin1_code }}">{{ geo.admin2_name }}</a>
+  <a href="admin2.html?code={{ geo.admin2_code }}">{{ geo.admin2_name }}</a>
   {% endif %}
   {% endif %}
+  {% elseif facet %}
+  <a href="location.html?code={{ geo.code }}">{{ geo.name }}</a>
   {% endif %}
   {% endif %}
 </nav>

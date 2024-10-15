@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    {% include "templates/includes/html-headers.template.html" %}
+  </head>
+  <body>
+    <header>
+      {% include "templates/includes/breadcrumbs.template.html" %}
+      <h1>{{ title }}</h1>
+    </header>
+    <main>
+      <p>
+        <b>Date:</b>
+        {{ data.first().reference_period_start | truncate(10, true, "") }}
+      </p>
+      <p>
+        <b>Sources:</b><br />
+        {% for source in resource.source %}
+        <a href="{{ source.dataset_hdx_provider_link }}">{{ source.dataset_hdx_provider_name }}</a>,
+        <i><a href="{{ source.dataset_hdx_link }}">{{ source.dataset_hdx_title }}</a></i>,
+        download: <code><a href="{{ source.download_url }}">{{ source.name }}</a></code>
+        <br />
+        {% endfor %}
+      </p>
+      <table>
+        <thead>
+          <tr>
+            {% for key, value in data.first() %}
+            {% if not key in stop_list %}
+            <th>{{ key }}</th>
+            {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+          <tr>
+            {% for key, value in row %}
+            {% if not key in stop_list %}
+            <td>{{ value }}</td>
+            {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

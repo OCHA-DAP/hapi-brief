@@ -144,6 +144,45 @@ async function render_admin2 () {
 }
 
 
+/**
+ * Look up a complete data table and render it as HTML.
+ */
+async function render_table () {
+    let data = { facet: "table", stop_list: STOP_LIST }
+
+    console.log(data);
+
+    data.category = searchParams.get("category")
+    data.subcategory = searchParams.get("subcategory")
+    data.location_code = searchParams.get("location-code")
+    data.admin1_code = searchParams.get("admin1-code")
+    data.admin2_code = searchParams.get("admin2-code")
+
+    let query = ""
+
+    if (data.admin2_code) {
+        query = "&admin2_code=" + data.admin2_code
+        data.geo = await get_data("metadata", "admin2", "&admin2_code=" + data.admin2_code)
+    } else if (data.admin1_code) {
+        query = "&admin1_code=" + data.admin1_code
+        data.geo = await get_data("metadata", "admin1", "&admin1_code=" + data.admin1_code)
+    } else {
+        query = "&location_code=" + data.location_code
+        data.geo = await get_data("metadata", "location", "&location_code=" + data.location_code)
+    }
+
+    data.geo = data.geo.first()
+
+    data.title = "Data: " + data.subcategory.replace('-', ' ') + " for " + data.geo.name
+    data.data = await get_data(data.category, data.subcategory, query)
+
+    data.resource = await get_data("metadata", "resource", "&resource_hdx_id=" + data.data.first().resource_hdx_id);
+    console.log(data.resource.source[0])
+    
+    nunjucks.render('templates/table.template.html', data, redraw_html);
+}
+
+
 //
 // Data-preparation functions
 //
