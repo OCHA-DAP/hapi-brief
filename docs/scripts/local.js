@@ -8,21 +8,31 @@ const HAPI_HOST = "hapi.humdata.org";
 
 const PAGE_SIZE = 10000;
 
+// const STOP_LIST = [
+//     'location_ref',
+//     'location_code',
+//     'location_name',
+//     'admin1_ref',
+//     'admin1_code',
+//     'admin1_name',
+//     'admin2_ref',
+//     'admin2_code',
+//     'admin2_name',
+//     'resource_hdx_id',
+//     'sector_code',
+//     'org_type_code',
+// ];
+
 const STOP_LIST = [
+    'origin_location_ref',
+    'asylum_location_ref',
     'location_ref',
-    'location_code',
-    'location_name',
     'admin1_ref',
-    'admin1_code',
-    'admin1_name',
     'admin2_ref',
-    'admin2_code',
-    'admin2_name',
-    'resource_hdx_id',
     'sector_code',
     'org_type_code',
+    'resource_hdx_id'
 ];
-
 
 // Set up the templating system.
 let nunjucks_env = nunjucks.configure({
@@ -44,13 +54,13 @@ async function render_locations () {
     if (!data.filter) {
         data.filter = "hrp";
     }
-    let query = "";
+    let params = {};
     if (data.filter == "hrp") {
-        query = "&has_hrp=true";
+        params.has_hrp = true;
     } else if (data.filter == "gho") {
-        query = "&in_gho=true";
+        params.in_gho = true;
     }
-    data.locations = await get_data("metadata", "location", query);
+    data.locations = await get_data("metadata", "location", params);
     nunjucks.render('templates/locations.template.html', data, redraw_html);
 }
 
@@ -62,28 +72,28 @@ async function render_location () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
 
-    data.location = await get_data("metadata", "location", "&code=" + pcode);
+    data.location = await get_data("metadata", "location", { code: pcode });
     data.location = data.location.first();
     data.geo = data.location;
+    data.geo_type = 'location';
     
-    data.admin1s = await get_data("metadata", "admin1", "&location_code=" + pcode);
+    data.admin1s = await get_data("metadata", "admin1", { location_code: pcode });
 
-    data.population = await get_data("population-social", "population", "&admin_level=0&location_code=" + pcode);
+    data.population = await get_data("population-social", "population", { admin_level: 0, location_code: pcode });
 
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin_level=0&location_code=" + pcode);
+    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
 
-    data.operational_presence = await get_data("coordination-context", "operational-presence", "&location_code=" + pcode);
+    data.operational_presence = await get_data("coordination-context", "operational-presence", { location_code: pcode });
 
-    data.funding = await get_data("coordination-context", "funding", "&location_code=" + pcode);
+    data.funding = await get_data("coordination-context", "funding", { location_code: pcode });
 
-    data.refugees = await get_data("affected-people", "refugees", "&asylum_location_code=" + pcode);
+    data.refugees = await get_data("affected-people", "refugees", { asylum_location_code: pcode });
 
-    data.returnees = await get_data("affected-people", "returnees", "&asylum_location_code=" + pcode);
+    data.returnees = await get_data("affected-people", "returnees", { asylum_location_code: pcode });
 
-    data.idps = await get_data("affected-people", "idps", "&admin_level=0&location_code=" + pcode);
+    data.idps = await get_data("affected-people", "idps", { admin_level: 0, location_code: pcode });
 
-    data.national_risk = await get_data("coordination-context", "national-risk", "&location_code=" + pcode);
-    console.log(data.national_risk);
+    data.national_risk = await get_data("coordination-context", "national-risk", { location_code: pcode });
 
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
 
@@ -157,27 +167,41 @@ async function render_table () {
     data.location_code = searchParams.get("location-code")
     data.admin1_code = searchParams.get("admin1-code")
     data.admin2_code = searchParams.get("admin2-code")
+    data.sector_code = searchParams.get("sector-code")
 
-    let query = ""
+    let params = {};
+
+    for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code' ]) {
+        if (data[key]) {
+            params[key] = data[key];
+        }
+    }
+
+    if (data.sector_code) {
+        data.sector = await get_data("metadata", "sector", { code: data.sector_code });
+        data.sector = data.sector.first();
+        console.log(data.sector);
+    }
 
     if (data.admin2_code) {
-        query = "&admin2_code=" + data.admin2_code
-        data.geo = await get_data("metadata", "admin2", "&admin2_code=" + data.admin2_code)
+        data.geo = await get_data("metadata", "admin2", { code: data.admin2_code });
     } else if (data.admin1_code) {
         query = "&admin1_code=" + data.admin1_code
-        data.geo = await get_data("metadata", "admin1", "&admin1_code=" + data.admin1_code)
+        data.geo = await get_data("metadata", "admin1", { code: data.admin1_code });
     } else {
         query = "&location_code=" + data.location_code
-        data.geo = await get_data("metadata", "location", "&location_code=" + data.location_code)
+        data.geo = await get_data("metadata", "location", { code: data.location_code });
     }
 
     data.geo = data.geo.first()
 
-    data.title = "Data: " + data.subcategory.replace('-', ' ') + " for " + data.geo.name
-    data.data = await get_data(data.category, data.subcategory, query)
+    data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + data.geo.name
+    if (data.sector) {
+        data.title += " (" + data.sector.name + ")";
+    }
+    data.data = await get_data(data.category, data.subcategory, params);
 
-    data.resource = await get_data("metadata", "resource", "&resource_hdx_id=" + data.data.first().resource_hdx_id);
-    console.log(data.resource.source[0])
+    data.resource = await get_data("metadata", "resource", { resource_hdx_id: data.data.first().resource_hdx_id });
     
     nunjucks.render('templates/table.template.html', data, redraw_html);
 }
@@ -222,17 +246,28 @@ function redraw_html (error_message, html) {
     }
 }
 
+function capitalize (s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 
 /**
  * Download data from HAPI.
  */
-async function get_data (category, subcategory, query) {
+async function get_data (category, subcategory, params) {
     let result = [];
     let finished = false;
     let offset = 0;
+
+    params = {...params};
+    params['app_identifier'] = API_KEY;
+    params['limit'] = PAGE_SIZE;
+
     while (!finished) {
-        let url = "https://hapi.humdata.org/api/v1/" + category + "/" + subcategory + "?app_identifier=" + API_KEY + "&limit=" + PAGE_SIZE + "&offset=" + offset + query;
-    let response = await fetch(url);
+        params['offset'] = offset;
+        let url = "https://hapi.humdata.org/api/v1/" + category + "/" + subcategory + "?" + new URLSearchParams(params).toString();
+        console.log(url);
+        let response = await fetch(url);
         let data = await response.json();
         result.push(...data.data);
         if (data.data.length < PAGE_SIZE) {

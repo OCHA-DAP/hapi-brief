@@ -38,7 +38,13 @@
           <tr>
             {% for key, value in row %}
             {% if not key in stop_list %}
-            <td>{{ value }}</td>
+            <td>
+              {% if key in ['reference_period_start', 'reference_period_end'] %}
+              {{ value | truncate(10, true, "") }}
+              {% else %}
+              {{ value }}
+              {% endif %}
+            </td>
             {% endif %}
             {% endfor %}
           </tr>
