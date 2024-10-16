@@ -1,6 +1,6 @@
 {% if humanitarian_needs.data.withRows("sector_code", "Intersectoral").length() > 0 %}
 {% set filtered_pin = humanitarian_needs.data.withRows("sector_code", "Intersectoral").withRows("age_range", "ALL").cache() %}
-{% for status in [["INN", "Total in need"], ["TGT", "Total targeted"]] %}
+{% for status in [["INN", "People in need"], ["TGT", "Targeted for assistance"]] %}
 {% set pin_date = filtered_pin.max("reference_period_start") %}
 {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_start", pin_date).cache() %}
 <div class="infobox">

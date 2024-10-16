@@ -160,6 +160,12 @@ DF.Data = class {
         return new DF.Aggregate(this, keys, dependent);
     }
 
+    // Sort rows according to the keys provided (if no keys, leave as-is)
+    sort (keys, reverse) {
+        console.log('sort', keys, reverse);
+        return new DF.Sort(this, keys, reverse);
+    }
+
     /**
      * Assumes a basic array. Override in derived classes.
      */
@@ -287,4 +293,42 @@ DF.Aggregate = class extends DF.Cache {
         return tuples;
     }
 
+}
+
+/**
+ * Sort data by the keys provided
+ */
+DF.Sort = class extends DF.Cache {
+
+    constructor(source, keys, reverse) {
+        super(source);
+        this.keys = keys;
+    }
+
+    collect() {
+
+        let filter = this;
+
+        function compare (r1, r2) {
+            for (let key of filter.keys) {
+                if (r1[key] < r2[key]) {
+                    return filter.reverse ? 1 : -1;
+                } else if (r1[key] > r2[key]) {
+                    return filter.reverse ? -1 : 1;
+                }
+            }
+            return 0;
+        }
+        
+
+        let rows = [];
+        for (let row of this.source) {
+            rows.push(row);
+        }
+        console.log('rows', rows);
+        rows.sort(compare);
+
+        return rows;
+    }
+    
 }

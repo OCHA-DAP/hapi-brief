@@ -199,14 +199,16 @@ function get_sectors (datasets) {
     for (var data of datasets) {
         if (data) {
             for (var row of data.data.aggregate(['sector_name', 'sector_code'])) {
-                sector_map[row.sector_code] = row.sector_name;
+                if (row.sector_code != 'Intersectoral') {
+                    sector_map[row.sector_code] = row.sector_name;
+                }
             }
         }
     }
     for (let [key, value] of Object.entries(sector_map)) {
         result.push({ code: key, name: value });
     }
-    return result;
+    return new DF.Data(result);
 }
 
 

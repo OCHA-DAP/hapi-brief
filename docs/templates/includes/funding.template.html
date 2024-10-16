@@ -1,24 +1,19 @@
 {% if funding.has_data > 0 %}
-<section id="funding">
-  <h2>Appeals and funding</h2>
-  <div class="infoboxes">
-    {% for appeal in funding.data.withRows("reference_period_start", funding.latest_date) %}
-    <div class="infobox">
-      <div class="key-figure">
-        <b class="label"><cite>{{ appeal.appeal_name }}</cite></b>
-        <div class="supplemental-figure">
-          <i class="label">Required</i>
-          USD {{ appeal.requirements_usd | nfmt }}
-        </div>
-        <div class="supplemental-figure">
-          <i class="label">Funded</i>
-          USD {{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)
-        </div>
-      </div>
-      <span class="sources">{{ funding.sources | join(", ") }}</span>
-      <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=funding&amp;location-code={{location.code}}">data</a>
+{% for appeal in funding.data.withRows("reference_period_start", funding.latest_date) %}
+<div class="infobox">
+  <div class="key-figure">
+    <b class="label"><cite>{{ appeal.appeal_name }}</cite></b>
+    <div class="supplemental-figure">
+      <i class="label">Required</i>
+      USD {{ appeal.requirements_usd | nfmt }}
     </div>
-    {% endfor %}
+    <div class="supplemental-figure">
+      <i class="label">Funded</i>
+      USD {{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)
+    </div>
   </div>
-</section>
+  <span class="sources">{{ funding.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=funding&amp;location-code={{location.code}}">data</a>
+</div>
+{% endfor %}
 {% endif %}
