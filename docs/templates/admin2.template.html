@@ -48,13 +48,13 @@
                 {% endif %}
                 {% endfor %}
                 <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
-                <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;admin2-code={{admin2.code}}&amp;admin-level=2&amp;sector-code={{ sector.code }}">data</a>
+                <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;admin2-code={{admin2.code}}&amp;sector-code={{ sector.code }}">data</a>
               </div>
             </div>
             {% endif %}
             {% endfor %}
             {% endfor %}
-            {% set op_sector = operational_presence.data.withRows("sector_code", sector.code).aggregate(['org_name', 'org_acronym', 'org_type', 'org_type_description']).cache() %}
+            {% set op_sector = operational_presence.data.withRows("sector_code", sector.code).aggregate(['org_name', 'org_acronym', 'org_type', 'org_type_description', 'reference_period_start']).cache() %}
             {% set op_date = op_sector.max("reference_period_start") %}
             {% set op_filtered = op_sector.withRows("reference_period_start", op_date) %}
             {% if op_filtered.length() > 0 %}

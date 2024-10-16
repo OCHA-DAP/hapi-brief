@@ -74,6 +74,12 @@ async function render_location () {
     // Grab the subcategories
     data.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode });
     data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
+    if (data.humanitarian_needs.data.length() == 0) {
+        data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, location_code: pcode });
+    }
+    if (data.humanitarian_needs.data.length() == 0) {
+        data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, location_code: pcode });
+    }
     data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode });
     data.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode });
     data.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode });
@@ -105,6 +111,9 @@ async function render_admin1 () {
 
     data.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode });
     data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode });
+    if (data.humanitarian_needs.data.length() == 0) {
+        data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode });
+    }
     data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
     data.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
 
@@ -302,7 +311,6 @@ async function get_data (category, subcategory, params) {
     while (!finished) {
         params['offset'] = offset;
         let url = "https://hapi.humdata.org/api/v1/" + category + "/" + subcategory + "?" + new URLSearchParams(params).toString();
-        console.log(url);
         let response = await fetch(url);
         let data = await response.json();
         result.push(...data.data);

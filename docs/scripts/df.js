@@ -162,7 +162,6 @@ DF.Data = class {
 
     // Sort rows according to the keys provided (if no keys, leave as-is)
     sort (keys, reverse) {
-        console.log('sort', keys, reverse);
         return new DF.Sort(this, keys, reverse);
     }
 
@@ -325,7 +324,6 @@ DF.Sort = class extends DF.Cache {
         for (let row of this.source) {
             rows.push(row);
         }
-        console.log('rows', rows);
         rows.sort(compare);
 
         return rows;
