@@ -1,17 +1,11 @@
-<section id="operational-presence">
-  <h2>Humanitarian organisations working in {{ geo.name }}</h2>
-  <p>
-    <b>Clusters:</b>
-    {% for sector in operational_presence.aggregate(["sector_name", "sector_code"]) %}
-    {{ sector.sector_name }},
-    {% endfor %}
-  </p>
-  <p>
-    <b>Organisations:</b>
-    {% for org in operational_presence.aggregate(["org_name", "org_acronym"]) %}
-    {{ org.org_name }},
-    {% endfor %}
-  </p>
-  {% set data=operational_presence %}
-  {% include "templates/includes/table.template.html" %}
-</section>
+{% if operational_presence.has_data %}
+<div class="infobox">
+  <div class="key-figure">
+    <span class="date">{{ operational_presence.latest_date | truncate(4, true, "") }}</span>
+    <span class="label">Organisations responding</span>
+    <span class="figure">{{ operational_presence.data.aggregate(["org_name", "org_acronym"]).length() }}</span>
+    <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
+    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}">data</a>
+  </div>
+</div>
+{% endif %}

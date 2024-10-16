@@ -1,23 +1,21 @@
-{% if idps.length() > 0 %}
-
-{% set idps_date = idps.max("reference_period_start") %}
-{% set latest_idps = idps.withRows(idps_date) %}
+{% if idps.has_data %}
+{% set latest_idps = idps.data.withRows(idps.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ idps_date | truncate(7, true, "") }}</span>
+    <span class="date">{{ idps.latest_date | truncate(7, true, "") }}</span>
     <span class="label">IDPs</span>
     <span class="figure">{{ latest_idps.last().population | nfmt }}</span>
-    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=idps&amp;location-code={{location.code}}&amp;admin-level=0">data</a>
+    <span class="sources">{{ idps.sources | join(", ") }}</span>
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=idps&amp;{{ geo_type }}-code={{geo.code}}">data</a>
   </div>
 </div>
 
-{% elseif humanitarian_needs.withRows("population_group", "IDP").withRows("sector_code", "Intersectoral").length() > 0 %}
-{% set data = humanitarian_needs.withRows("population_group", "IDP").withRows("sector_code", "Intersectoral").cache() %}
-{% set idps_date = data.max("reference_period_start") %}
-{% set latest_idps = data.withRows(idps_date) %}
+{% elseif humanitarian_needs.data.withRows("population_group", "IDP").withRows("sector_code", "Intersectoral").length() > 0 %}
+{% set data = humanitarian_needs.data.withRows("population_group", "IDP").withRows("sector_code", "Intersectoral").cache() %}
+{% set latest_idps = data.withRows(idps.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ idps_date | truncate(7, true, "") }}</span>
+    <span class="date">{{ idps.latest_date | truncate(7, true, "") }}</span>
     <span class="label">IDPs</span>
     <span class="figure">{{ latest_idps.withRows("gender", "all").last().population | nfmt }}</span>
     {% if latest_idps.contains("gender", "f") %}
@@ -32,7 +30,8 @@
       <span class="label">male</span>
     </div>
     {% endif %}
-    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;location-code={{location.code}}&amp;admin_level=0">data</a>
+    <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{geo.code}}">data</a>
   </div>
 </div>
 

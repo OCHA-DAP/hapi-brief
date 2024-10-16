@@ -1,9 +1,8 @@
-{% if national_risk.length() > 0 %}
-{% set national_risk_date = national_risk.max("reference_period_start") %}
-{% set latest_national_risk = national_risk.withRows("reference_period_start", national_risk_date).cache() %}
+{% if national_risk.has_data %}
+{% set latest_national_risk = national_risk.data.withRows("reference_period_start", national_risk.latest_date).cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ national_risk_date | truncate(4, true, "") }}</span>
+    <span class="date">{{ national_risk.latest_date | truncate(4, true, "") }}</span>
     <span class="label">National risk</span>
     <span class="figure">{{ latest_national_risk.last().overall_risk }} / 10</span>
     <div class="supplemental-figure">
@@ -18,6 +17,7 @@
       {{ latest_national_risk.last().vulnerability_risk }}
       <span class="label">vulnerability</span>
     </div>
+    <span class="sources">{{ national_risk.sources | join(", ") }}</span>
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=national-risk&amp;location-code={{location.code}}">data</a>
   </div>
 </div>

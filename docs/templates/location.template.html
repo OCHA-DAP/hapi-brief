@@ -36,6 +36,8 @@
 
           {% include "templates/includes/national-risk.template.html" %}
 
+          {% include "templates/includes/operational-presence.template.html" %}
+
         </div>
 
       </section>
@@ -50,8 +52,8 @@
           <h3>{{ sector.name }}</h3>
 
           <div class="infoboxes">
-          {% set filtered_pin = humanitarian_needs.withRows("sector_code", sector.code).withRows("age_range", "ALL").cache() %}
-          {% for group in humanitarian_needs.values("population_group") %}
+          {% set filtered_pin = humanitarian_needs.data.withRows("sector_code", sector.code).withRows("age_range", "ALL").cache() %}
+          {% for group in humanitarian_needs.data.values("population_group") %}
           {% for status in [["INN", "in need"], ["TGT", "targeted"]] %}
           {% set pin_date = filtered_pin.max("reference_period_start") %}
           {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("population_group", group).withRows("reference_period_start", pin_date).cache() %}
@@ -70,13 +72,14 @@
               </div>
               {% endif %}
               {% endfor %}
+              <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
               <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;location-code={{location.code}}&amp;admin-level=0&amp;sector-code={{ sector.code }}">data</a>
             </div>
           </div>
           {% endif %}
           {% endfor %}
           {% endfor %}
-          {% set op_sector = operational_presence.withRows("sector_code", sector.code).cache() %}
+          {% set op_sector = operational_presence.data.withRows("sector_code", sector.code).cache() %}
           {% set op_date = op_sector.max("reference_period_start") %}
           {% set op_filtered = op_sector.withRows("reference_period_start", op_date) %}
           {% if op_filtered.length() > 0 %}
@@ -92,6 +95,7 @@
               <span class="label">{{ type }}</span>
             </div>
             {% endfor %}
+            <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
             <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;location-code={{location.code}}&amp;sector-code={{sector.code}}">data</a>
           </div>
           {% endif %}

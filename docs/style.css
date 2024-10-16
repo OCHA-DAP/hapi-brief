@@ -33,7 +33,7 @@ aside {
 .infobox {
     position: relative;
     width: 15rem;
-    padding: 1rem;
+    padding: 1rem 1rem 3rem 1rem;
     border-radius: 1rem;
     background: #eeeeff;
     margin-right: 1rem;
@@ -69,8 +69,17 @@ label {
     margin: 0 2em;
 }
 
+.sources {
+    font-size: 50%;
+    display: inline-block;
+    max-width: 66.66666%;
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+}
+
 .data-link {
-    font-size: 80%;
+    font-size: 50%;
     position:absolute;
     right: 1rem;
     bottom: 1rem;

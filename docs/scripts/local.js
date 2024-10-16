@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////
+// Generate key figures from the Humanitarian API (HAPI) as web pages.
+//
+// Started 2024-10 by David Megginson
+////////////////////////////////////////////////////////////////////////
+
+// Change to your own API key
 const API_KEY = "SERYLWRhdmlkOm1lZ2dpbnNvbkB1bi5vcmc=";
 
 
@@ -8,21 +15,7 @@ const HAPI_HOST = "hapi.humdata.org";
 
 const PAGE_SIZE = 10000;
 
-// const STOP_LIST = [
-//     'location_ref',
-//     'location_code',
-//     'location_name',
-//     'admin1_ref',
-//     'admin1_code',
-//     'admin1_name',
-//     'admin2_ref',
-//     'admin2_code',
-//     'admin2_name',
-//     'resource_hdx_id',
-//     'sector_code',
-//     'org_type_code',
-// ];
-
+// Exclude from data tables
 const STOP_LIST = [
     'origin_location_ref',
     'asylum_location_ref',
@@ -34,15 +27,13 @@ const STOP_LIST = [
     'resource_hdx_id'
 ];
 
+
 // Set up the templating system.
 let nunjucks_env = nunjucks.configure({
     autoescape: true,
     web: { async: true }
 });
-
 nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
-
-
 
 
 /**
@@ -72,32 +63,28 @@ async function render_location () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
 
-    data.location = await get_data("metadata", "location", { code: pcode });
-    data.location = data.location.first();
+    data.location = await get_row("metadata", "location", { code: pcode });
+    data.admin_level = 0;
     data.geo = data.location;
     data.geo_type = 'location';
-    
+
+    // Grab the admin1 list
     data.admin1s = await get_data("metadata", "admin1", { location_code: pcode });
 
-    data.population = await get_data("population-social", "population", { admin_level: 0, location_code: pcode });
+    // Grab the subcategories
+    data.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode });
+    data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
+    data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode });
+    data.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode });
+    data.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode });
+    data.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode });
+    data.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode });
+    data.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode });
 
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
-
-    data.operational_presence = await get_data("coordination-context", "operational-presence", { location_code: pcode });
-
-    data.funding = await get_data("coordination-context", "funding", { location_code: pcode });
-
-    data.refugees = await get_data("affected-people", "refugees", { asylum_location_code: pcode });
-
-    data.returnees = await get_data("affected-people", "returnees", { asylum_location_code: pcode });
-
-    data.idps = await get_data("affected-people", "idps", { admin_level: 0, location_code: pcode });
-
-    data.national_risk = await get_data("coordination-context", "national-risk", { location_code: pcode });
-
+    // Extract the sectors from 3W and PIN data
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
 
-
+    // Render the page
     nunjucks.render('templates/location.template.html', data, redraw_html);
 }
 
@@ -109,19 +96,17 @@ async function render_admin1 () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
 
-    data.admin1 = await get_data("metadata", "admin1", "&code=" + pcode);
-    data.admin1 = data.admin1.first();
+    data.admin1 = await get_row("metadata", "admin1", { code: pcode });
+    data.admin_level = 1;
     data.geo = data.admin1;
+    data.geo_type = 'admin1';
 
-    data.admin2s = await get_data("metadata", "admin2", "&admin1_code=" + pcode);
+    data.admin2s = await get_data("metadata", "admin2", { admin1_code: pcode });
 
-    data.population = await get_data("population-social", "population", "&admin_level=1&admin1_code=" + pcode);
-
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin_level=1&admin1_code=" + pcode);
-
-    data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin1_code=" + pcode);
-    
-    data.idps = await get_data("affected-people", "idps", "&admin1_code=" + pcode);
+    data.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode });
+    data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode });
+    data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
+    data.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
 
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
 
@@ -136,19 +121,18 @@ async function render_admin2 () {
     let pcode = searchParams.get("code");
     let data = { stop_list: STOP_LIST };
 
-    data.admin2 = await get_data("metadata", "admin2", "&code=" + pcode);
-    data.admin2 = data.admin2.first();
+    data.admin2 = await get_row("metadata", "admin2", { code: pcode });
+    data.admin_level = 2;
     data.geo = data.admin2;
+    data.geo_type = 'admin2';
     
-    data.population = await get_data("population-social", "population", "&admin_level=2&admin2_code=" + pcode);
-
-    data.humanitarian_needs = await get_data("affected-people", "humanitarian-needs", "&admin_level=2&admin2_code=" + pcode);
-
-    data.operational_presence = await get_data("coordination-context", "operational-presence", "&admin2_code=" + pcode);
-
-    data.idps = await get_data("affected-people", "idps", "&admin2_code=" + pcode);
+    data.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode });
+    data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode });
+    data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode });
+    data.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode });
 
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+
 
     nunjucks.render('templates/admin2.template.html', data, redraw_html);
 }
@@ -159,8 +143,6 @@ async function render_admin2 () {
  */
 async function render_table () {
     let data = { facet: "table", stop_list: STOP_LIST }
-
-    console.log(data);
 
     data.category = searchParams.get("category")
     data.subcategory = searchParams.get("subcategory")
@@ -181,7 +163,6 @@ async function render_table () {
     if (data.sector_code) {
         data.sector = await get_data("metadata", "sector", { code: data.sector_code });
         data.sector = data.sector.first();
-        console.log(data.sector);
     }
 
     if (data.admin2_code) {
@@ -200,8 +181,8 @@ async function render_table () {
     }
     data.data = await get_data(data.category, data.subcategory, params);
 
-    data.resource = await get_data("metadata", "resource", { resource_hdx_id: data.data.first().resource_hdx_id });
-    
+    data.resources = await get_resources(data.data);
+
     nunjucks.render('templates/table.template.html', data, redraw_html);
 }
 
@@ -217,7 +198,7 @@ function get_sectors (datasets) {
     let result = [];
     for (var data of datasets) {
         if (data) {
-            for (var row of data.aggregate(['sector_name', 'sector_code'])) {
+            for (var row of data.data.aggregate(['sector_name', 'sector_code'])) {
                 sector_map[row.sector_code] = row.sector_name;
             }
         }
@@ -250,6 +231,60 @@ function capitalize (s) {
 }
 
 
+//
+// Data-access functions
+//
+
+
+/**
+ * Return a list of HDX resource sources for data.
+ */
+async function get_resources (data) {
+    let resources = [];
+    for (let resource_id of data.values('resource_hdx_id')) {
+        resources.push(await get_row('metadata', 'resource', { resource_hdx_id: resource_id }));
+    }
+    return new DF.Data(resources);
+}
+
+
+/**
+ * Return a subcategory object with extra metadata
+ */
+async function get_subcategory (category, subcategory, params) {
+    let result = {};
+    result.params = params;
+
+    // API values
+    result.data = await get_data(category, subcategory, params);
+    result.resources = await get_resources(result.data);
+
+    // calculated values
+    result.has_data = result.data.length() > 0;
+    if (result.has_data) {
+        result.start_date = result.data.min('reference_period_start');
+        result.end_date = result.data.max('reference_period_end');
+        result.latest_date = result.data.max('reference_period_start');
+        result.sources = result.resources.values('dataset_hdx_provider_name');
+    }
+    
+    return result;
+}
+
+
+/**
+ * Return the first match for a HAPI query.
+ */
+async function get_row (category, subcategory, params) {
+    let data = await get_data(category, subcategory, params);
+    if (data.length() > 0) {
+        return data.first();
+    } else {
+        return null;
+    }
+}
+
+
 /**
  * Download data from HAPI.
  */
@@ -277,3 +312,5 @@ async function get_data (category, subcategory, params) {
     }
     return new DF.Data(result);
 }
+
+// end

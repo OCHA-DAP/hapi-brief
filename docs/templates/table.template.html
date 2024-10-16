@@ -16,7 +16,7 @@
       </p>
       <p>
         <b>Sources:</b><br />
-        {% for source in resource.source %}
+        {% for source in resources %}
         <a href="{{ source.dataset_hdx_provider_link }}">{{ source.dataset_hdx_provider_name }}</a>,
         <i><a href="{{ source.dataset_hdx_link }}">{{ source.dataset_hdx_title }}</a></i>,
         download: <code><a href="{{ source.download_url }}">{{ source.name }}</a></code>
