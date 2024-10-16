@@ -7,7 +7,7 @@
     <span class="date">{{ idps_date | truncate(7, true, "") }}</span>
     <span class="label">IDPs</span>
     <span class="figure">{{ latest_idps.last().population | nfmt }}</span>
-    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=idps&amp;location-code={{location.code}}">data</a>
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=idps&amp;location-code={{location.code}}&amp;admin-level=0">data</a>
   </div>
 </div>
 
@@ -32,7 +32,7 @@
       <span class="label">male</span>
     </div>
     {% endif %}
-    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;location-code={{location.code}}">data</a>
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;location-code={{location.code}}&amp;admin_level=0">data</a>
   </div>
 </div>
 

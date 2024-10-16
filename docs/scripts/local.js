@@ -168,10 +168,11 @@ async function render_table () {
     data.admin1_code = searchParams.get("admin1-code")
     data.admin2_code = searchParams.get("admin2-code")
     data.sector_code = searchParams.get("sector-code")
+    data.admin_level = searchParams.get("admin-level");
 
     let params = {};
 
-    for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code' ]) {
+    for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code', 'admin_level' ]) {
         if (data[key]) {
             params[key] = data[key];
         }
@@ -186,10 +187,8 @@ async function render_table () {
     if (data.admin2_code) {
         data.geo = await get_data("metadata", "admin2", { code: data.admin2_code });
     } else if (data.admin1_code) {
-        query = "&admin1_code=" + data.admin1_code
         data.geo = await get_data("metadata", "admin1", { code: data.admin1_code });
     } else {
-        query = "&location_code=" + data.location_code
         data.geo = await get_data("metadata", "location", { code: data.location_code });
     }
 
