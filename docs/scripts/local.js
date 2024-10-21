@@ -114,6 +114,7 @@ async function render_admin1 () {
     if (data.humanitarian_needs.data.length() == 0) {
         data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode });
     }
+    data.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: data.admin1.location_code, provider_admin1_name: data.admin1.name });
     data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
     data.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
 
@@ -151,19 +152,30 @@ async function render_admin2 () {
  * Look up a complete data table and render it as HTML.
  */
 async function render_table () {
+
     let data = { facet: "table", stop_list: STOP_LIST }
+
+    function make_geo_name () {
+        if (data.provider_admin1_name) {
+            return data.provider_admin1_name;
+        } else {
+            return data.geo.name + "(" + data.geo.code + ")";
+        }
+    }
 
     data.category = searchParams.get("category")
     data.subcategory = searchParams.get("subcategory")
     data.location_code = searchParams.get("location-code")
     data.admin1_code = searchParams.get("admin1-code")
+    data.provider_admin1_name = searchParams.get("provider-admin1-name")
     data.admin2_code = searchParams.get("admin2-code")
+    data.provider_admin2_name = searchParams.get("provider-admin2-name")
     data.sector_code = searchParams.get("sector-code")
     data.admin_level = searchParams.get("admin-level");
 
     let params = {};
 
-    for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code', 'admin_level' ]) {
+    for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code', 'admin_level', 'provider_admin1_name', 'provider_admin2_name' ]) {
         if (data[key]) {
             params[key] = data[key];
         }
@@ -184,7 +196,8 @@ async function render_table () {
 
     data.geo = data.geo.first()
 
-    data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + data.geo.name
+    data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + make_geo_name();
+
     if (data.sector) {
         data.title += " (" + data.sector.name + ")";
     }
