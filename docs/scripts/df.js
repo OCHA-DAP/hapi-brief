@@ -145,6 +145,11 @@ DF.Data = class {
         return new DF.Cache(this);
     }
 
+    // Filter using a predicate
+    filter (test) {
+        return new DF.Select(this, test);
+    }
+
     // Return all the rows where key = value
     withRows (key, value) {
         return new DF.Select(this, row => { return row[key] == value; });
