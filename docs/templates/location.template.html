@@ -4,20 +4,12 @@
     <title>{{ location.name }}</title>
     {% include "templates/includes/html-headers.template.html" %}
   </head>
-  <body>
+  <body class="with-sidebar">
     <header>
       {% set geo=location %}
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ location.name }}</h1>
     </header>
-    <aside>
-      <section id="admin1">
-        <h2>Administrative level 1 subdivisions</h2>
-        {% for admin1 in admin1s.sort(['name']) %}
-        <p><a href="admin1.html?code={{ admin1.code }}">{{ admin1.name }}</a></p>
-        {% endfor %}
-      </section>
-    </aside>
     <main>
       <section id="overview">
         <h2>Topline figures</h2>
@@ -99,5 +91,15 @@
       </section>
       {% endif %}
     </main>
+    <aside>
+      <section id="admin1">
+        <h2>Administrative level 1 subdivisions</h2>
+        <div class="content">
+          {% for admin1 in admin1s.sort(['name']) %}
+          <p><a href="admin1.html?code={{ admin1.code }}">{{ admin1.name }}</a></p>
+          {% endfor %}
+        </div>
+      </section>
+    </aside>
   </body>
 </html>

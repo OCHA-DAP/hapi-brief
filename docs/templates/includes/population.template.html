@@ -1,4 +1,5 @@
 {% if population.has_data %}
+{% set population_latest_date = population.data.max("reference_period_start") %}
 {% set latest_population = population.data.withRows("reference_period_start", population.latest_date) %}
 <div class="infobox">
   <div class="key-figure">

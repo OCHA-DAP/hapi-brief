@@ -8,10 +8,11 @@
     <header>
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>HAPI locations</h1>
+      <p>(HAPI "Locations" mostly correspond to countries.)</p>
       <form target="">
         <b>Filter locations:</b>
-        {% for f in [["hrp", "HRP"], ["gho", "GHO"], ["all", "all"]] %}
-        <label>
+        {% for f in [["hrp", "HRP", "Locations with Humanitarian Response Plans"], ["gho", "GHO", "Locations in the Global Humanitarian Overview"], ["all", "all", "All available locations"]] %}
+        <label title="{{ f[2] }}">
           {{ f[1] }}
           <input type="radio" name="filter" value="{{ f[0] }}"{% if filter == f[0] %} checked="checked"{% endif %} onclick="this.form.submit()" />
         </label>
@@ -19,6 +20,7 @@
       </form>
     </header>
     <main>
+      <div class="columns">
       {% if locations|length %}
       {% for location in locations.withoutRows("code", "AFG") %}
       <p><a href="location.html?code={{ location.code }}">{{ location.name }}</a></p>
@@ -26,6 +28,7 @@
       {% else %}
       <p>No location data available.</p>
       {% endif %}
+      </div>
     </main>
   </body>
 </html>

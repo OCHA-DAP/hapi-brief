@@ -1,5 +1,6 @@
 body {
     font-family: Helvetica, Ariel, sanserif;
+    margin: 1rem;
 }
 
 table {
@@ -38,9 +39,14 @@ tbody tr:last-of-type {
 }
 
 aside {
-    float: right;
-    width: 20em;
     padding: 1ex;
+}
+
+aside .content {
+    columns: 2;
+    padding-top: 0;
+    column-gap: 2em;
+    column-width: 20em;
 }
 
 .breadcrumbs {
@@ -108,9 +114,57 @@ label {
     bottom: 1rem;
 }
 
+.columns {
+    margin-top: 2rem;
+    columns: 5;
+    column-gap: 2em;
+    column-width: 20em;
+}
+
 .data-link {
     font-size: 50%;
     position:absolute;
     right: 1rem;
     bottom: 1rem;
 }
+
+#message {
+    position: absolute;
+    width: 100vw;
+    top: 45vh;
+    text-align: center;
+}
+
+
+/* For wider screens */
+
+@media (min-width: 1200px) {
+
+    .with-sidebar header:has(aside) {
+        height: 7rem;
+    }
+
+    .with-sidebar main {
+        width: 80vw;
+    }
+
+    aside {
+        position: absolute;
+        width: 19vw;
+        right: 1vw;
+        top: 7rem;
+        border-radius: 1rem;
+        background: #eeeeee;
+    }
+
+    aside .content {
+        columns: 1;
+        margin-left: 1rem;
+    }
+
+    aside h2 {
+        font-size: 100%;
+    }
+
+}
+

@@ -4,17 +4,11 @@
     <title>{{ admin1.name }}, {{ admin1.location_name }}</title>
     {% include "templates/includes/html-headers.template.html" %}
   </head>
-  <body>
+  <body class="with-sidebar">
     <header>
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ admin1.name }}, {{ admin1.location_name }} ({{ admin1.code }})</h1>
     </header>
-    <aside id="admin2">
-      <h2>Administrative level 2 subdivisions</h2>
-      {% for admin2 in admin2s.sort(['name']) %}
-      <p><a href="admin2.html?code={{ admin2.code }}">{{ admin2.name }}</a></p>
-      {% endfor %}
-    </aside>
     <main>
 
       <section class="infoboxes">
@@ -91,6 +85,14 @@
       </section>
       {% endif %}
 
-    </main>
+    </main> 
+    <aside id="admin2">
+      <h2>Administrative level 2 subdivisions</h2>
+      <div class="content">
+        {% for admin2 in admin2s.sort(['name']) %}
+        <p><a href="admin2.html?code={{ admin2.code }}">{{ admin2.name }}</a></p>
+        {% endfor %}
+      </div>
+    </aside>
   </body>
 </html>
