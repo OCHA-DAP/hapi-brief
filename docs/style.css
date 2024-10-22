@@ -1,53 +1,30 @@
+/**
+ * Stylesheet for HAPI Brief
+ *
+ * Default style is for mobile; desktop overrides at end.
+ */
+
 body {
     font-family: Helvetica, Ariel, sanserif;
     margin: 1rem;
 }
 
-table {
-    border-collapse: collapse;
-    font-size: 90%;
-}
 
-thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-}
-
-th, td {
-    padding: 1rem;
-}
-
-td {
-    border-left: 1px #aaaaaa solid;
-}
-
-td:first-child {
-    border-left: none;
-}
-
-tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-}
-
-aside {
-    padding: 1ex;
-}
+/**
+ * Geo sidebars.
+ * (will be overridden later for larger screens)
+ */
 
 aside .content {
     columns: 2;
-    padding-top: 0;
     column-gap: 2em;
     column-width: 20em;
 }
+
+
+/**
+ * Breadcrumb navigation
+ */
 
 .breadcrumbs {
     font-size: 80%;
@@ -60,6 +37,51 @@ aside .content {
 .breadcrumbs a::after {
     content: " > ";
 }
+
+
+/**
+ * Data tables.
+ */
+
+table.data {
+    border-collapse: collapse;
+    font-size: 90%;
+}
+
+table.data thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+table.data th, table.data td {
+    padding: 1rem;
+}
+
+table.data td {
+    border-left: 1px #aaaaaa solid;
+}
+
+table.data td:first-child {
+    border-left: none;
+}
+
+table.data tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+table.data tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+table.data tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+
+/**
+ * Main infoboxes
+ */
 
 .infoboxes {
     display: flex;
@@ -128,6 +150,11 @@ label {
     bottom: 1rem;
 }
 
+
+/**
+ * Progress message while loading
+ */
+
 #message {
     position: absolute;
     width: 100vw;
@@ -136,7 +163,9 @@ label {
 }
 
 
-/* For wider screens */
+/**
+ * Overrides for larger screens
+ */
 
 @media (min-width: 1200px) {
 
@@ -155,6 +184,7 @@ label {
         top: 7rem;
         border-radius: 1rem;
         background: #eeeeee;
+        padding: 1ex;
     }
 
     aside .content {
@@ -167,4 +197,3 @@ label {
     }
 
 }
-
