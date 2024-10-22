@@ -12,7 +12,7 @@
     <main>
       <p>
         <b>Date:</b>
-        {{ data.first().reference_period_start | truncate(10, true, "") }}
+        {{ data.max('reference_period_start') | truncate(10, true, "") }}
       </p>
       <p>
         <b>Sources:</b><br />

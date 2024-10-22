@@ -1,16 +1,22 @@
+{% if geo %}
 <nav class="breadcrumbs">
-  {% if geo %}
   <a href="locations.html">Locations</a>
-  {% if geo.location_code %}
+
+  {% if admin_level > 0 %}
   <a href="location.html?code={{ geo.location_code }}">{{ geo.location_name }}</a>
-  {% if geo.admin1_code %}
-  <a href="admin1.html?code={{ geo.admin1_code }}">{{ geo.admin1_name }}</a>
-  {% if geo.admin2_code %}
-  <a href="admin2.html?code={{ geo.admin2_code }}">{{ geo.admin2_name }}</a>
-  {% endif %}
-  {% endif %}
-  {% elseif facet %}
+  {% elseif admin_level == 0 and facet %}
   <a href="location.html?code={{ geo.code }}">{{ geo.name }}</a>
   {% endif %}
-  {% endif %}
+
+  {% if admin_level > 1 %}
+  <a href="admin1.html?code={{ geo.admin1_code }}">{{ geo.admin1_name }}</a>
+  {% elseif admin_level == 1 and facet %}
+  <a href="admin1.html?code={{ geo.code }}">{{ geo.name }}</a>
+  {% endif %}  
+  
+  {% if admin_level == 2 and facet %}
+  <a href="admin2.html?code={{ geo.admin1_code }}">{{ geo.admin1_name }}</a>
+  {% endif %}  
+  
 </nav>
+{% endif %}

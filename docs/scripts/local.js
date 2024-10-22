@@ -20,6 +20,8 @@ const STOP_LIST = [
     'origin_location_ref',
     'asylum_location_ref',
     'location_ref',
+    'location_code',
+    'location_name',
     'admin1_ref',
     'admin2_ref',
     'sector_code',
@@ -155,14 +157,32 @@ async function render_admin2 () {
  */
 async function render_table () {
 
-    let data = { facet: "table", stop_list: STOP_LIST }
+    let data = { facet: "table", stop_list: [...STOP_LIST] }
 
     function make_geo_name () {
-        if (data.provider_admin1_name) {
-            return data.provider_admin1_name;
-        } else {
-            return data.geo.name + "(" + data.geo.code + ")";
+        let elements = [];
+
+        if (data.admin_level == 2) {
+            elements.push(data.geo.name);
+        } else if (data.provider_admin2_name) {
+            elements.push(data.provider_admin2_name);
         }
+
+        if (data.admin_level == 1) {
+            elements.push(data.geo.name);
+        } else if (data.geo.admin1_name) {
+            elements.push(data.geo.admin1_name);
+        } else if (data.provider_admin1_name) {
+            elements.push(data.provider_admin1_name);
+        }
+
+        if (data.geo.location_name) {
+            elements.push(data.geo.location_name);
+        } else {
+            elements.push(data.geo.name);
+        }
+
+        return elements.join(", ") + (data.geo ? " (" + data.geo.code + ")" : "");
     }
 
     data.category = searchParams.get("category")
@@ -190,19 +210,37 @@ async function render_table () {
 
     if (data.admin2_code) {
         data.geo = await get_data("metadata", "admin2", { code: data.admin2_code });
+        data.admin_level = 2;
     } else if (data.admin1_code) {
         data.geo = await get_data("metadata", "admin1", { code: data.admin1_code });
+        data.admin_level = 1;
     } else {
         data.geo = await get_data("metadata", "location", { code: data.location_code });
+        data.admin_level = 0;
     }
 
-    data.geo = data.geo.first()
+    if (data.admin_level > 0) {
+        data.stop_list.push('provider_admin1_name');
+        data.stop_list.push('admin1_name');
+        data.stop_list.push('admin1_code');
+    }
+
+    if (data.admin_level > 1) {
+        data.stop_list.push('provider_admin2_name');
+        data.stop_list.push('admin2_name');
+        data.stop_list.push('admin2_code');
+    }
+
+    console.log(data.stop_list);
+    
+    data.geo = data.geo.first();
 
     data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + make_geo_name();
 
     if (data.sector) {
-        data.title += " (" + data.sector.name + ")";
+        data.title += " / " + data.sector.name;
     }
+
     data.data = await get_data(data.category, data.subcategory, params);
 
     data.resources = await get_resources(data.data);
@@ -254,6 +292,10 @@ function redraw_html (error_message, html) {
 
 function capitalize (s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function loading_message (s) {
+    document.getElementById("message").textContent = s;
 }
 
 
@@ -335,6 +377,8 @@ async function get_data (category, subcategory, params) {
     params = {...params};
     params['app_identifier'] = API_KEY;
     params['limit'] = PAGE_SIZE;
+
+    loading_message("Loading HAPI data: " + category + " / " + subcategory);
 
     while (!finished) {
         params['offset'] = offset;
