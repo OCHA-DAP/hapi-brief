@@ -2,12 +2,8 @@
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ conflict_event.latest_date | truncate(7, true, "") }}</span>
-    <span class="label">Conflict events (last 90 days)</span>
-    <span class="figure">{{ conflict_event.data.sum('events') | nfmt }}</span>
-    <div class="supplemental-figure">
-      {{ conflict_event.data.sum('fatalities') | nfmt }}
-      <span class="label">fatalities</span>
-    </div>
+    <span class="label">Conflict fatalities (last 90 days)</span>
+    <span class="figure">{{ conflict_event.data.sum('fatalities') | nfmt }}</span>
     {% for event_type in conflict_event.data.values("event_type") %}
     {% set value = conflict_event.data.withRows("event_type", event_type).sum('events') %}
     {% if value > 0 %}
