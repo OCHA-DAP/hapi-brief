@@ -220,7 +220,7 @@ async function render_table () {
     
     data.geo = data.geo.first();
 
-    data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + make_geo_name();
+    data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + make_geo_name(data);
 
     if (data.sector) {
         data.title += " / " + data.sector.name;
