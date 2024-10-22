@@ -31,14 +31,13 @@
           {% include "templates/includes/returnees.template.html" %}
           {% include "templates/includes/idps.template.html" %}
           {% include "templates/includes/national-risk.template.html" %}
-          {* {% include "templates/includes/conflict-event.template.html" %} *}
-               
           {% include "templates/includes/operational-presence.template.html" %}
 
         </div>
 
       </section>
 
+      {% if sectors.length() > 0 %}
       <section id="sectors">
         <h2>Sectors</h2>
         {% for sector in sectors.sort(['name']) %}
@@ -98,6 +97,7 @@
         </section>
         {% endfor %}
       </section>
+      {% endif %}
     </main>
   </body>
 </html>
