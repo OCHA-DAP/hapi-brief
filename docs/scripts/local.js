@@ -4,6 +4,12 @@
 // Started 2024-10 by David Megginson
 ////////////////////////////////////////////////////////////////////////
 
+
+//
+// Setup
+//
+
+
 // Change to your own API key
 const API_KEY = "SERYLWRhdmlkOm1lZ2dpbnNvbkB1bi5vcmc=";
 
@@ -15,7 +21,7 @@ const HAPI_HOST = "hapi.humdata.org";
 
 const PAGE_SIZE = 10000;
 
-// Exclude from data tables
+// Exclude from data tables (render functions may add more)
 const STOP_LIST = [
     'origin_location_ref',
     'asylum_location_ref',
@@ -36,6 +42,11 @@ let nunjucks_env = nunjucks.configure({
     web: { async: true }
 });
 nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
+
+
+//
+// Page-rendering functions
+//
 
 
 /**
@@ -159,32 +170,6 @@ async function render_table () {
 
     let data = { facet: "table", stop_list: [...STOP_LIST] }
 
-    function make_geo_name () {
-        let elements = [];
-
-        if (data.admin_level == 2) {
-            elements.push(data.geo.name);
-        } else if (data.provider_admin2_name) {
-            elements.push(data.provider_admin2_name);
-        }
-
-        if (data.admin_level == 1) {
-            elements.push(data.geo.name);
-        } else if (data.geo.admin1_name) {
-            elements.push(data.geo.admin1_name);
-        } else if (data.provider_admin1_name) {
-            elements.push(data.provider_admin1_name);
-        }
-
-        if (data.geo.location_name) {
-            elements.push(data.geo.location_name);
-        } else {
-            elements.push(data.geo.name);
-        }
-
-        return elements.join(", ") + (data.geo ? " (" + data.geo.code + ")" : "");
-    }
-
     data.category = searchParams.get("category")
     data.subcategory = searchParams.get("subcategory")
     data.location_code = searchParams.get("location-code")
@@ -275,7 +260,7 @@ function get_sectors (datasets) {
 
 
 //
-// Rendering functions
+// Display helper functions
 //
 
 
@@ -290,12 +275,50 @@ function redraw_html (error_message, html) {
     }
 }
 
+/**
+ * Capitalise the first letter of a string.
+ */
 function capitalize (s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+
+/**
+ * Display a message when loading data.
+ */
 function loading_message (s) {
     document.getElementById("message").textContent = s;
+}
+
+
+/**
+ * Construct a human-readable geographic name from data fields
+ */
+function make_geo_name (data) {
+
+    let elements = [];
+
+    if (data.admin_level == 2) {
+        elements.push(data.geo.name);
+    } else if (data.provider_admin2_name) {
+        elements.push(data.provider_admin2_name);
+    }
+
+    if (data.admin_level == 1) {
+        elements.push(data.geo.name);
+    } else if (data.geo.admin1_name) {
+        elements.push(data.geo.admin1_name);
+    } else if (data.provider_admin1_name) {
+        elements.push(data.provider_admin1_name);
+    }
+
+    if (data.geo.location_name) {
+        elements.push(data.geo.location_name);
+    } else {
+        elements.push(data.geo.name);
+    }
+
+    return elements.join(", ") + (data.geo ? " (" + data.geo.code + ")" : "");
 }
 
 
