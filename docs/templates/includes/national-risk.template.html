@@ -5,20 +5,22 @@
     <span class="date">{{ national_risk.latest_date | truncate(4, true, "") }}</span>
     <span class="label">National risk</span>
     <span class="figure">{{ latest_national_risk.last().overall_risk }} / 10</span>
-    <div class="supplemental-figure">
-      {{ latest_national_risk.last().coping_capacity_risk }}
-      <span class="label">coping capacity</span>
-    </div>
-    <div class="supplemental-figure">
-      {{ latest_national_risk.last().hazard_exposure_risk }}
-      <span class="label">hazard</span>
-    </div>
-    <div class="supplemental-figure">
-      {{ latest_national_risk.last().vulnerability_risk }}
-      <span class="label">vulnerability</span>
-    </div>
-    <span class="sources">{{ national_risk.sources | join(", ") }}</span>
-    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=national-risk&amp;location-code={{location.code}}">data</a>
   </div>
+  <table class="supplemental-figures">
+    <tr>
+      <td>coping capacity</td>
+      <td>{{ latest_national_risk.last().coping_capacity_risk }}</td>
+    </tr>
+    <tr>
+      <td>hazard</td>
+      <td>{{ latest_national_risk.last().hazard_exposure_risk }}</td>
+    </tr>
+    <tr>
+      <td>vulnerability</td>
+      <td>{{ latest_national_risk.last().vulnerability_risk }}</td>
+    </tr>
+  </table>
+  <span class="sources">{{ national_risk.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=national-risk&amp;location-code={{location.code}}">data</a>
 </div>
 {% endif %}

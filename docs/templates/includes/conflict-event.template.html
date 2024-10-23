@@ -4,17 +4,19 @@
     <span class="date">{{ conflict_event.latest_date | truncate(7, true, "") }}</span>
     <span class="label">Conflict fatalities (last 90 days)</span>
     <span class="figure">{{ conflict_event.data.sum('fatalities') | nfmt }}</span>
-    {% for event_type in conflict_event.data.values("event_type") %}
-    {% set value = conflict_event.data.withRows("event_type", event_type).sum('events') %}
-    {% if value > 0 %}
-    <div class="supplemental-figure">
-      {{ value | nfmt }}
-      <span class="label">{{ event_type | replace("_", " ") }} events</span>
-    </div>
-    {% endif %}
-    {% endfor %}
     <span class="sources">{{ conflict_event.sources | join(", ") }}</span>
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=conflict-event&amp;{{ geo_type }}-code={{geo.code}}">data</a>
   </div>
+  <table class="supplemental-figures">
+    {% for event_type in conflict_event.data.values("event_type") %}
+    {% set value = conflict_event.data.withRows("event_type", event_type).sum('events') %}
+    {% if value > 0 %}
+    <tr>
+      <td>{{ event_type | replace("_", " ") }} events:</td>
+      <td>{{ value | nfmt }}</td>
+    </tr>
+    {% endif %}
+  {% endfor %}
+  </table>
 </div>
 {% endif %}

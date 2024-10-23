@@ -5,14 +5,16 @@
     <span class="date">{{ operational_presence.latest_date | truncate(4, true, "") }}</span>
     <span class="label">Organisations responding</span>
     <span class="figure">{{ op_filtered.length() }}</span>
-    {% for type in op_filtered.values("org_type_description") | sort %}
-    <div class="supplemental-figure">
-      {{ op_filtered.withRows("org_type_description", type).length() | nfmt }}
-      <span class="label">{{ type }}</span>
-              </div>
-    {% endfor %}
-    <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
-    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}">data</a>
   </div>
+  <table class="supplemental-figures">
+    {% for type in op_filtered.values("org_type_description") | sort %}
+    <tr>
+      <td>{{ type }}</td>
+      <td>{{ op_filtered.withRows("org_type_description", type).length() | nfmt }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}">data</a>
 </div>
 {% endif %}

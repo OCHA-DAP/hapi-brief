@@ -3,15 +3,17 @@
 <div class="infobox">
   <div class="key-figure">
     <b class="label"><cite>{{ appeal.appeal_name }}</cite></b>
-    <div class="supplemental-figure">
-      <i class="label">Required</i>
-      USD {{ appeal.requirements_usd | nfmt }}
-    </div>
-    <div class="supplemental-figure">
-      <i class="label">Funded</i>
-      USD {{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)
-    </div>
   </div>
+  <table class="supplemental-figures">
+    <tr>
+      <td>Required (USD):</td>
+      <td>{{ appeal.requirements_usd | nfmt }}</td>
+    </tr>
+    <tr>
+      <td>Funded (USD):</td>
+      <td>{{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)</td>
+    </tr>
+  </table>
   <span class="sources">{{ funding.sources | join(", ") }}</span>
   <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=funding&amp;location-code={{location.code}}">data</a>
 </div>

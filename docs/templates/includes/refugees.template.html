@@ -1,21 +1,23 @@
 {% if refugees.has_data %}
-{% set latest_refugees = refugees.data.withRows("reference_period_start", refugees.latest_date).cache() %}
+{% set latest_refugees = refugees.data.withRows("reference_period_start", refugees.latest_date).withRows("age_range", "all").cache() %}
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ refugees.latest_date | truncate(4, true, "") }}</span>
     <span class="label">Refugees</span>
-    <span class="figure">{{ latest_refugees.withRows("age_range", "all").withRows("gender", "all").sum("population") | nfmt }}</span>
+    <span class="figure">{{ latest_refugees.withRows("gender", "all").sum("population") | nfmt }}</span>
+  </div>
+  <table class="supplemental-figures">
     {% for gender in [["f", "female"], ["m", "male"]] %}
     {% set population = latest_refugees.withRows("gender", gender[0]).sum("population") %}
     {% if population > 0 %}
-    <div class="supplemental-figure">
-      <span class="label">{{ gender[1] }}</span>
-      {{ population | nfmt }}
-    </div>
+    <tr>
+      <td>{{ gender[1] }}</td>
+      <td>{{ population | nfmt }}</td>
+    </tr>
     {% endif %}
     {% endfor %}
-    <span class="sources">{{ refugees.sources | join(", ") }}</span>
-    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=refugees&amp;location-code={{location.code}}">data</a>
-  </div>
+  </table>
+  <span class="sources">{{ refugees.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=affected-people&amp;subcategory=refugees&amp;location-code={{location.code}}">data</a>
 </div>
 {% endif %}

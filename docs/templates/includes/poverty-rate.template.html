@@ -5,16 +5,18 @@
     <span class="date">{{ poverty_rate.latest_date | truncate(4, true, "") }}</span>
     <span class="label">Multidimensional Poverty (MPI)</span>
     <span class="figure">{{ (latest_poverty_rate.last().headcount_ratio) | nfmt | truncate(4, true, "") }}%</span>
-    <div class="supplemental-figure">
-      {{ latest_poverty_rate.last().in_severe_poverty | nfmt | truncate(4, true, "") }}%
-      <span class="label">in severe poverty</span>
-    </div>
-    <div class="supplemental-figure">
-      {{ latest_poverty_rate.last().vulnerable_to_poverty | nfmt | truncate(4, true, "") }}%
-      <span class="label">vulnerable to poverty</span>
-    </div>
-    <span class="sources">{{ poverty_rate.sources | join(", ") }}</span>
-    <a class="data-link" href="table.html?category=population-social&amp;subcategory=poverty-rate&amp;location-code={{admin1.location_code}}&amp;provider-admin1-name={{admin1.name}}">data</a>
   </div>
+  <table class="supplemental-figures">
+    <tr>
+      <td>in severe poverty</td>
+      <td>{{ latest_poverty_rate.last().in_severe_poverty | nfmt | truncate(4, true, "") }}%</td>
+    </tr>
+    <tr>
+      <td>vulnerable to poverty</td>
+      <td>{{ latest_poverty_rate.last().vulnerable_to_poverty | nfmt | truncate(4, true, "") }}%</td>
+    </tr>
+  </table>
+  <span class="sources">{{ poverty_rate.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=population-social&amp;subcategory=poverty-rate&amp;location-code={{admin1.location_code}}&amp;provider-admin1-name={{admin1.name}}">data</a>
 </div>
 {% endif %}

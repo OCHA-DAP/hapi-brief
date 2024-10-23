@@ -1,0 +1,33 @@
+{% if food_price.has_data %}
+{% set latest_food_price = food_price.data.withRows("reference_period_start", food_price.latest_date).cache() %}
+{% set currency_code = latest_food_price.last().currency_code %}
+<div class="infobox">
+  <div class="key-figure">
+    <span class="date">{{ food_price.latest_date | truncate(10, true, "") }}</span>
+    <span class="label">Sample food prices ({{ currency_code }})</span>
+  </div>
+  <table class="supplemental-figures">
+    {% set commodities = latest_food_price.values('commodity_name') %}
+    {% for i in [0, 1, 2, 3, 4, 5] %}
+    {% set commodity_name=commodities[i] %}
+    {% if commodity_name %}
+    {% set commodity_price =latest_food_price.withRows('commodity_name', commodity_name) %}
+    {% if commodity_price.length() > 0 %}
+    <tr>
+      {% set min_price = commodity_price.min('price') %}
+      {% set max_price = commodity_price.max('price') %}
+      <td>{{ commodity_name }}</td>
+      {% if min_price == max_price %}
+      <td>{{ max_price }}</td>
+      {% else %}
+      <td>{{ min_price }}–{{ max_price }}</td>
+      {% endif %}
+    </tr>
+    {% endif %}
+    {% endif %}
+    {% endfor %}
+  </table>
+  <span class="sources">{{ food_price.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=food&amp;subcategory=food-price&amp;{{ geo_type }}-code={{geo.code}}">data</a>
+</div>
+{% endif %}

@@ -6,17 +6,19 @@
     <span class="date">{{ population_latest_date | truncate(4, true, "") }}</span>
     <span class="label">Total population</span>
     <span class="figure">{{ latest_population.withRows("gender", "all").last().population | nfmt }}</span>
+  </div>
+  <table class="supplemental-figures">
     {% for gender in [["f", "female"], ["m", "male"]] %}
     {% set population = latest_population.withRows("gender", gender[0]).last().population %}
     {% if population > 0 %}
-    <div class="supplemental-figure">
-      <span class="label">{{ gender[1] }}</span>
-      {{ population | nfmt }}
-    </div>
+    <tr>
+      <td>{{ gender[1] }}</td>
+      <td>{{ population | nfmt }}</td>
+    </tr>
     {% endif %}
     {% endfor %}
-    <span class="sources">{{ population.sources | join(", ") }}</span>
-    <a class="data-link" href="table.html?category=population-social&amp;subcategory=population&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
-  </div>
+  </table>
+  <span class="sources">{{ population.sources | join(", ") }}</span>
+  <a class="data-link" href="table.html?category=population-social&amp;subcategory=population&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
 </div>
 {% endif %}

@@ -39,10 +39,9 @@ const STOP_LIST = [
 // Set up the templating system.
 let nunjucks_env = nunjucks.configure({
     autoescape: true,
-    web: { async: true }
+    web: { async: false }
 });
 nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
-
 
 //
 // Page-rendering functions
@@ -99,7 +98,6 @@ async function render_location () {
     data.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode });
     data.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode });
     data.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode });
-    // data.conflict_event = await get_conflict_event("location_code", pcode, 90);
 
     // Extract the sectors from 3W and PIN data
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
@@ -131,6 +129,8 @@ async function render_admin1 () {
     data.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: data.admin1.location_code, provider_admin1_name: data.admin1.name });
     data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
     data.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
+    data.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode });
+
     data.conflict_event = await get_conflict_event("admin1_code", pcode, 90);
 
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
@@ -155,6 +155,8 @@ async function render_admin2 () {
     data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode });
     data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode });
     data.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode });
+    data.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode });
+
     data.conflict_event = await get_conflict_event("admin2_code", pcode, 90);
 
     data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
