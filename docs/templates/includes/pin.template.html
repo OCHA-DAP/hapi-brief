@@ -1,5 +1,10 @@
-{% if humanitarian_needs.data.withRows("sector_code", "Intersectoral").length() > 0 %}
-{% set filtered_pin = humanitarian_needs.data.withRows("sector_code", "Intersectoral").withRows("age_range", "ALL").cache() %}
+{% if sector %}
+{% set sector_code = sector.code %}
+{% else %}
+{% set sector_code = 'Intersectoral' %}
+{% endif %}
+{% if humanitarian_needs.data.withRows("sector_code", sector_code).length() > 0 %}
+{% set filtered_pin = humanitarian_needs.data.withRows("sector_code", sector_code).withRows("age_range", "ALL").cache() %}
 {% for status in [["INN", "People in need"], ["TGT", "Targeted for assistance"]] %}
 {% set pin_date = filtered_pin.max("reference_period_start") %}
 {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_start", pin_date).cache() %}
@@ -21,7 +26,11 @@
     {% endfor %}
   </table>
   <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
+  {% if sector_code == 'Intersectoral' %}
   <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
+  {% else %}
+  <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}&amp;sector_code={{ sector_code }}">data</a>
+  {% endif %}
 </div>
 {% endfor %}
 {% endif %}
