@@ -1,5 +1,10 @@
 {% if operational_presence.has_data %}
+{% if sector %}
+{% set op_filtered = operational_presence.data.withRows('sector_code', sector.code).withRows(operational_presence.latest_date).aggregate(["org_name", "org_acronym", "org_type_description"]).cache() %}
+{% else %}
 {% set op_filtered = operational_presence.data.withRows(operational_presence.latest_date).aggregate(["org_name", "org_acronym", "org_type_description"]).cache() %}
+{% endif %}
+{% if op_filtered.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ operational_presence.latest_date | truncate(4, true, "") }}</span>
@@ -9,12 +14,25 @@
   <table class="supplemental-figures">
     {% for type in op_filtered.values("org_type_description") | sort %}
     <tr>
-      <td>{{ type }}</td>
+      <td>{{ type | default("<unspecified>", true) }}</td>
       <td>{{ op_filtered.withRows("org_type_description", type).length() | nfmt }}</td>
     </tr>
     {% endfor %}
   </table>
   <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
+  {% if sector %}
+  {% if op_use_provider_name %}
+  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
+  {% else %}
+  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}">data</a>
+  {% endif %}
+  {% else %}
+  {% if op_use_provider_name %}
+  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
+  {% else %}
   <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}">data</a>
+  {% endif %}
+  {% endif %}
 </div>
+{% endif %}
 {% endif %}

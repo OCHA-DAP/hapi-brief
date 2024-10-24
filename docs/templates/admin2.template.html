@@ -56,26 +56,7 @@
             {% endif %}
             {% endfor %}
             {% endfor %}
-            {% set op_sector = operational_presence.data.withRows("sector_code", sector.code).aggregate(['org_name', 'org_acronym', 'org_type', 'org_type_description', 'reference_period_start']).cache() %}
-            {% set op_date = op_sector.max("reference_period_start") %}
-            {% set op_filtered = op_sector.withRows("reference_period_start", op_date) %}
-            {% if op_filtered.length() > 0 %}
-            <div class="infobox">
-              <div class="key-figure">
-                <span class="date">{{ op_date | truncate(7, true, "") }}</span>
-                <span class="label">Organisations responding</span>
-                <span class="figure">{{ op_filtered.length() | nfmt }}</span>
-              </div>
-              {% for type in op_filtered.values("org_type_description") | sort %}
-              <div class="supplemental-figure">
-                <span class="figure">{{ op_filtered.withRows("org_type_description", type).length() | nfmt }}</span>
-                <span class="label">{{ type }}</span>
-              </div>
-              {% endfor %}
-              <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
-              <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;admin2-code={{admin2.code}}&amp;sector-code={{sector.code}}">data</a>
-            </div>
-            {% endif %}
+            {% include "templates/includes/operational-presence.template.html" %}
 
           </div>
 

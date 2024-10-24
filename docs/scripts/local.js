@@ -128,12 +128,17 @@ async function render_admin1 () {
     }
     info.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: info.admin1.location_code, provider_admin1_name: info.admin1.name });
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
+    if (!info.operational_presence.has_data) {
+        info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin1_name: info.admin1.name });
+        info.op_use_provider_name = true;
+    }
     info.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
     info.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode });
 
     info.conflict_event = await get_conflict_event("admin1_code", pcode, 90);
 
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
+    console.log(info.sectors);
 
     nunjucks.render('templates/admin1.template.html', info, redraw_html);
 }
@@ -154,6 +159,10 @@ async function render_admin2 () {
     info.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode });
     info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode });
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode });
+    if (!info.operational_presence.has_data) {
+        info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin2_name: info.admin2.name });
+        info.op_use_provider_name = true;
+    }
     info.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode });
     info.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode });
 
@@ -185,9 +194,16 @@ async function render_table () {
     let params = {};
 
     for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code', 'admin_level', 'provider_admin1_name', 'provider_admin2_name' ]) {
+        // FIXME need either provider_admin*_name or admin*_code, but not both
         if (info[key]) {
             params[key] = info[key];
         }
+    }
+    if ('provider_admin1_name' in params) {
+        delete params['admin1_code'];
+    }
+    if ('provider_admin2_name' in params) {
+        delete params['admin2_code'];
     }
 
     if (info.sector_code) {
