@@ -52,19 +52,19 @@ nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
  * Look up the list of HRP countries and render as HTML.
  */
 async function render_locations () {
-    let data = { stop_list: STOP_LIST };
-    data.filter = searchParams.get("filter");
-    if (!data.filter) {
-        data.filter = "hrp";
+    let info = { stop_list: STOP_LIST };
+    info.filter = searchParams.get("filter");
+    if (!info.filter) {
+        info.filter = "hrp";
     }
     let params = {};
-    if (data.filter == "hrp") {
+    if (info.filter == "hrp") {
         params.has_hrp = true;
-    } else if (data.filter == "gho") {
+    } else if (info.filter == "gho") {
         params.in_gho = true;
     }
-    data.locations = await get_data("metadata", "location", params);
-    nunjucks.render('templates/locations.template.html', data, redraw_html);
+    info.locations = await get_data("metadata", "location", params);
+    nunjucks.render('templates/locations.template.html', info, redraw_html);
 }
 
 
@@ -73,37 +73,37 @@ async function render_locations () {
  */
 async function render_location () {
     let pcode = searchParams.get("code");
-    let data = { stop_list: STOP_LIST };
+    let info = { stop_list: STOP_LIST };
 
-    data.location = await get_row("metadata", "location", { code: pcode });
-    data.admin_level = 0;
-    data.geo = data.location;
-    data.geo_type = 'location';
+    info.location = await get_row("metadata", "location", { code: pcode });
+    info.admin_level = 0;
+    info.geo = info.location;
+    info.geo_type = 'location';
 
     // Grab the admin1 list
-    data.admin1s = await get_data("metadata", "admin1", { location_code: pcode });
+    info.admin1s = await get_data("metadata", "admin1", { location_code: pcode });
 
     // Grab the subcategories
-    data.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode });
-    data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
-    if (data.humanitarian_needs.data.length() == 0) {
-        data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, location_code: pcode });
+    info.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode });
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
+    if (info.humanitarian_needs.data.length() == 0) {
+        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, location_code: pcode });
     }
-    if (data.humanitarian_needs.data.length() == 0) {
-        data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, location_code: pcode });
+    if (info.humanitarian_needs.data.length() == 0) {
+        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, location_code: pcode });
     }
-    data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode });
-    data.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode });
-    data.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode });
-    data.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode });
-    data.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode });
-    data.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode });
+    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode });
+    info.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode });
+    info.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode });
+    info.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode });
+    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode });
+    info.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode });
 
     // Extract the sectors from 3W and PIN data
-    data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+    info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
     // Render the page
-    nunjucks.render('templates/location.template.html', data, redraw_html);
+    nunjucks.render('templates/location.template.html', info, redraw_html);
 }
 
 
@@ -112,30 +112,30 @@ async function render_location () {
  */
 async function render_admin1 () {
     let pcode = searchParams.get("code");
-    let data = { stop_list: STOP_LIST };
+    let info = { stop_list: STOP_LIST };
 
-    data.admin1 = await get_row("metadata", "admin1", { code: pcode });
-    data.admin_level = 1;
-    data.geo = data.admin1;
-    data.geo_type = 'admin1';
+    info.admin1 = await get_row("metadata", "admin1", { code: pcode });
+    info.admin_level = 1;
+    info.geo = info.admin1;
+    info.geo_type = 'admin1';
 
-    data.admin2s = await get_data("metadata", "admin2", { admin1_code: pcode });
+    info.admin2s = await get_data("metadata", "admin2", { admin1_code: pcode });
 
-    data.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode });
-    data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode });
-    if (data.humanitarian_needs.data.length() == 0) {
-        data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode });
+    info.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode });
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode });
+    if (info.humanitarian_needs.data.length() == 0) {
+        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode });
     }
-    data.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: data.admin1.location_code, provider_admin1_name: data.admin1.name });
-    data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
-    data.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
-    data.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode });
+    info.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: info.admin1.location_code, provider_admin1_name: info.admin1.name });
+    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
+    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
+    info.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode });
 
-    data.conflict_event = await get_conflict_event("admin1_code", pcode, 90);
+    info.conflict_event = await get_conflict_event("admin1_code", pcode, 90);
 
-    data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+    info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
-    nunjucks.render('templates/admin1.template.html', data, redraw_html);
+    nunjucks.render('templates/admin1.template.html', info, redraw_html);
 }
 
 
@@ -144,24 +144,24 @@ async function render_admin1 () {
  */
 async function render_admin2 () {
     let pcode = searchParams.get("code");
-    let data = { stop_list: STOP_LIST };
+    let info = { stop_list: STOP_LIST };
 
-    data.admin2 = await get_row("metadata", "admin2", { code: pcode });
-    data.admin_level = 2;
-    data.geo = data.admin2;
-    data.geo_type = 'admin2';
+    info.admin2 = await get_row("metadata", "admin2", { code: pcode });
+    info.admin_level = 2;
+    info.geo = info.admin2;
+    info.geo_type = 'admin2';
     
-    data.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode });
-    data.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode });
-    data.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode });
-    data.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode });
-    data.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode });
+    info.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode });
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode });
+    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode });
+    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode });
+    info.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode });
 
-    data.conflict_event = await get_conflict_event("admin2_code", pcode, 90);
+    info.conflict_event = await get_conflict_event("admin2_code", pcode, 90);
 
-    data.sectors = get_sectors([data.operational_presence, data.humanitarian_needs]);
+    info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
-    nunjucks.render('templates/admin2.template.html', data, redraw_html);
+    nunjucks.render('templates/admin2.template.html', info, redraw_html);
 }
 
 
@@ -170,69 +170,69 @@ async function render_admin2 () {
  */
 async function render_table () {
 
-    let data = { facet: "table", stop_list: [...STOP_LIST] }
+    let info = { facet: "table", stop_list: [...STOP_LIST] }
 
-    data.category = searchParams.get("category")
-    data.subcategory = searchParams.get("subcategory")
-    data.location_code = searchParams.get("location-code")
-    data.admin1_code = searchParams.get("admin1-code")
-    data.provider_admin1_name = searchParams.get("provider-admin1-name")
-    data.admin2_code = searchParams.get("admin2-code")
-    data.provider_admin2_name = searchParams.get("provider-admin2-name")
-    data.sector_code = searchParams.get("sector-code")
-    data.admin_level = searchParams.get("admin-level");
+    info.category = searchParams.get("category")
+    info.subcategory = searchParams.get("subcategory")
+    info.location_code = searchParams.get("location-code")
+    info.admin1_code = searchParams.get("admin1-code")
+    info.provider_admin1_name = searchParams.get("provider-admin1-name")
+    info.admin2_code = searchParams.get("admin2-code")
+    info.provider_admin2_name = searchParams.get("provider-admin2-name")
+    info.sector_code = searchParams.get("sector-code")
+    info.admin_level = searchParams.get("admin-level");
 
     let params = {};
 
     for (key of [ 'location_code', 'admin1_code', 'admin2_code', 'sector_code', 'admin_level', 'provider_admin1_name', 'provider_admin2_name' ]) {
-        if (data[key]) {
-            params[key] = data[key];
+        if (info[key]) {
+            params[key] = info[key];
         }
     }
 
-    if (data.sector_code) {
-        data.sector = await get_data("metadata", "sector", { code: data.sector_code });
-        data.sector = data.sector.first();
+    if (info.sector_code) {
+        info.sector = await get_data("metadata", "sector", { code: info.sector_code });
+        info.sector = info.sector.first();
     }
 
-    if (data.admin2_code) {
-        data.geo = await get_data("metadata", "admin2", { code: data.admin2_code });
-        data.admin_level = 2;
-    } else if (data.admin1_code) {
-        data.geo = await get_data("metadata", "admin1", { code: data.admin1_code });
-        data.admin_level = 1;
+    if (info.admin2_code) {
+        info.geo = await get_data("metadata", "admin2", { code: info.admin2_code });
+        info.admin_level = 2;
+    } else if (info.admin1_code) {
+        info.geo = await get_data("metadata", "admin1", { code: info.admin1_code });
+        info.admin_level = 1;
     } else {
-        data.geo = await get_data("metadata", "location", { code: data.location_code });
-        data.admin_level = 0;
+        info.geo = await get_data("metadata", "location", { code: info.location_code });
+        info.admin_level = 0;
     }
 
-    if (data.admin_level > 0) {
-        data.stop_list.push('provider_admin1_name');
-        data.stop_list.push('admin1_name');
-        data.stop_list.push('admin1_code');
+    if (info.admin_level > 0) {
+        info.stop_list.push('provider_admin1_name');
+        info.stop_list.push('admin1_name');
+        info.stop_list.push('admin1_code');
     }
 
-    if (data.admin_level > 1) {
-        data.stop_list.push('provider_admin2_name');
-        data.stop_list.push('admin2_name');
-        data.stop_list.push('admin2_code');
+    if (info.admin_level > 1) {
+        info.stop_list.push('provider_admin2_name');
+        info.stop_list.push('admin2_name');
+        info.stop_list.push('admin2_code');
     }
 
-    console.log(data.stop_list);
+    console.log(info.stop_list);
     
-    data.geo = data.geo.first();
+    info.geo = info.geo.first();
 
-    data.title = "Data: " + capitalize(data.subcategory.replace('-', ' ')) + " for " + make_geo_name(data);
+    info.title = "Data: " + capitalize(info.subcategory.replace('-', ' ')) + " for " + make_geo_name(info);
 
-    if (data.sector) {
-        data.title += " / " + data.sector.name;
+    if (info.sector) {
+        info.title += " / " + info.sector.name;
     }
 
-    data.data = await get_data(data.category, data.subcategory, params);
+    info.data = await get_data(info.category, info.subcategory, params);
 
-    data.resources = await get_resources(data.data);
+    info.resources = await get_resources(info.data);
 
-    nunjucks.render('templates/table.template.html', data, redraw_html);
+    nunjucks.render('templates/table.template.html', info, redraw_html);
 }
 
 
