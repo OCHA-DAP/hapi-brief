@@ -1,9 +1,8 @@
-{% if population.has_data %}
-{% set population_latest_date = population.data.max("reference_period_start") %}
-{% set latest_population = population.data.withRows("reference_period_start", population.latest_date) %}
+{% if population.data.length() > 0 %}
+{% set latest_population = population.data.withRows("reference_period_end", population.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ population_latest_date | truncate(4, true, "") }}</span>
+    <span class="date">{{ population.latest_date | truncate(4, true, "") }}</span>
     <span class="label">Total population</span>
     <span class="figure">{{ latest_population.withRows("gender", "all").last().population | nfmt }}</span>
   </div>

@@ -1,5 +1,5 @@
 {% if poverty_rate.has_data %}
-{% set latest_poverty_rate = poverty_rate.data.withRows("reference_period_start", poverty_rate.latest_date).cache() %}
+{% set latest_poverty_rate = poverty_rate.data.withRows("reference_period_end", poverty_rate.latest_date).cache() %}
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ poverty_rate.latest_date | truncate(4, true, "") }}</span>

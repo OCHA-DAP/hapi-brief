@@ -386,7 +386,7 @@ async function get_subcategory (category, subcategory, params) {
     if (result.has_data) {
         result.start_date = result.data.min('reference_period_start');
         result.end_date = result.data.max('reference_period_end');
-        result.latest_date = result.data.max('reference_period_start');
+        result.latest_date = result.data.max('reference_period_end');
         result.sources = result.resources.values('dataset_hdx_provider_name');
     }
     

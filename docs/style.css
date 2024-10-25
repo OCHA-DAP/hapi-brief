@@ -9,6 +9,35 @@ body {
     margin: 1rem;
 }
 
+.jump-links {
+    font-size: 83.33333%;
+    color: #aaaaaa;
+}
+
+.icon {
+    height: 1em;
+}
+
+.download-link {
+    display: block;
+    float: right;
+    font-size: 83.333333%;
+}
+
+h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+form.selector label {
+    display: inline-box;
+    margin-left: 1rem;
+}
+
+.location-list p {
+    margin: 0 0 1rem 0;
+}
+
 
 /**
  * Geo sidebars.
@@ -22,12 +51,13 @@ aside .content {
 }
 
 
+
 /**
  * Breadcrumb navigation
  */
 
 .breadcrumbs {
-    font-size: 80%;
+    font-size: 83.33333%;
 }
 
 .breadcrumbs a {
@@ -45,7 +75,7 @@ aside .content {
 
 table.data {
     border-collapse: collapse;
-    font-size: 90%;
+    font-size: 83.33333%;
 }
 
 table.data thead tr {
@@ -102,27 +132,30 @@ table.data tbody tr:last-of-type {
     display: block;
     font-weight: bold;
     font-style: italic;
-    color: #888888;
-    font-size: 80%;
+    color: #440044;
+    font-size: 83.33333%;
+    margin-bottom: .5rem;
 }
 
 .key-figure .figure {
     font-size: 144%;
+    margin-bottom: .5rem;
 }
 
 .key-figure .date {
     display: inline-block;
-    font-size: 80%;
+    font-size: 83.33333%;
     float: right;
 }
 
 .supplemental-figures {
-    font-size: 80%;
+    font-size: 83.33333%;
     margin-left: 1rem;
+    width: 100%;
 }
 
 .sources {
-    font-size: 50%;
+    font-size: 57.870370%;
     display: inline-block;
     max-width: 66.66666%;
     position: absolute;
@@ -138,7 +171,7 @@ table.data tbody tr:last-of-type {
 }
 
 .data-link {
-    font-size: 50%;
+    font-size: 57.870370%;
     position:absolute;
     right: 1rem;
     bottom: 1rem;
@@ -164,7 +197,7 @@ table.data tbody tr:last-of-type {
 
 @media (min-width: 1200px) {
 
-    .with-sidebar header:has(aside) {
+    .with-sidebar header {
         height: 7rem;
     }
 
@@ -172,13 +205,17 @@ table.data tbody tr:last-of-type {
         width: 80vw;
     }
 
+    .with-sidebar header .jump-links {
+        display: none;
+    }
+
     aside {
         position: absolute;
         width: 19vw;
         right: 1vw;
-        top: 7rem;
+        top: 8rem;
         border-radius: 1rem;
-        background: #eeeeee;
+        background: #eeffee;
         padding: 1ex;
     }
 

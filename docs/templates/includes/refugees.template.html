@@ -1,5 +1,5 @@
 {% if refugees.has_data %}
-{% set latest_refugees = refugees.data.withRows("reference_period_start", refugees.latest_date).withRows("age_range", "all").cache() %}
+{% set latest_refugees = refugees.data.withRows("reference_period_end", refugees.latest_date).withRows("age_range", "all").cache() %}
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ refugees.latest_date | truncate(4, true, "") }}</span>

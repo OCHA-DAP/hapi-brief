@@ -1,5 +1,5 @@
 {% if food_price.has_data %}
-{% set latest_food_price = food_price.data.withRows("reference_period_start", food_price.latest_date).cache() %}
+{% set latest_food_price = food_price.data.withRows("reference_period_end", food_price.latest_date).cache() %}
 {% set currency_code = latest_food_price.last().currency_code %}
 <div class="infobox">
   <div class="key-figure">
@@ -18,9 +18,9 @@
       {% set max_price = commodity_price.max('price') %}
       <td>{{ commodity_name }}</td>
       {% if min_price == max_price %}
-      <td>{{ max_price }}</td>
+      <td>{{ max_price | nfmt }}</td>
       {% else %}
-      <td>{{ min_price }}–{{ max_price }}</td>
+      <td>{{ min_price | nfmt }}–{{ max_price | nfmt }}</td>
       {% endif %}
     </tr>
     {% endif %}

@@ -12,15 +12,14 @@
     <main>
       <p>
         <b>Date:</b>
-        {{ data.max('reference_period_start') | truncate(10, true, "") }}
+        {{ data.max('reference_period_end') | truncate(10, true, "") }}
       </p>
       <p>
-        <b>Sources:</b><br />
+        <b>HDX datasets:</b><br />
         {% for source in resources %}
-        <a href="{{ source.dataset_hdx_provider_link }}">{{ source.dataset_hdx_provider_name }}</a>,
-        <i><a href="{{ source.dataset_hdx_link }}">{{ source.dataset_hdx_title }}</a></i>,
-        download: <code><a href="{{ source.download_url }}">{{ source.name }}</a></code>
-        <br />
+        {{ source.dataset_hdx_provider_name }},
+        <b><i><a href="{{ source.dataset_hdx_link }}">{{ source.dataset_hdx_title }}</a></i></b>
+        <span class="download-link"><a href="{{ source.download_url }}"><img title="Download original data" alt="Download original data" class="icon" src="img/download.svg"/></a></span>
         {% endfor %}
       </p>
       <table class="data">

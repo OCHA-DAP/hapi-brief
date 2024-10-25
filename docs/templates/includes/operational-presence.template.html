@@ -1,3 +1,10 @@
+{#
+Template for an operational-presence infobox
+
+Sum up the total organisations at or below the current admin level, filtered by sector if provided,
+then provide a breakdown by org type in the supplemental figures.
+#}
+
 {% if operational_presence.has_data %}
 {% if sector %}
 {% set op_filtered = operational_presence.data.withRows('sector_code', sector.code).withRows(operational_presence.latest_date).aggregate(["org_name", "org_acronym", "org_type_description"]).cache() %}
@@ -7,7 +14,7 @@
 {% if op_filtered.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ operational_presence.latest_date | truncate(4, true, "") }}</span>
+    <span class="date">{{ operational_presence.latest_date | truncate(7, true, "") }}</span>
     <span class="label">Organisations responding</span>
     <span class="figure">{{ op_filtered.length() }}</span>
   </div>

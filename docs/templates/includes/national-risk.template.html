@@ -1,5 +1,5 @@
 {% if national_risk.has_data %}
-{% set latest_national_risk = national_risk.data.withRows("reference_period_start", national_risk.latest_date).cache() %}
+{% set latest_national_risk = national_risk.data.withRows("reference_period_end", national_risk.latest_date).cache() %}
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ national_risk.latest_date | truncate(4, true, "") }}</span>

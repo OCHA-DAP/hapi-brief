@@ -1,20 +1,31 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <title>{{ location.name }}</title>
     {% include "templates/includes/html-headers.template.html" %}
   </head>
+
   <body class="with-sidebar">
+
     <header>
       {% set geo=location %}
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ location.name }}</h1>
+      <nav class="jump-links">
+        <b>Jump to:</b>
+        <a href="#admin1">Administrative subdivisions</a>
+      </nav>
     </header>
+
     <main>
-      <section id="overview">
-        <h2>Topline figures</h2>
-        
+
+      <section id="top-line">
+        <h2>
+          <a href="#top-line">Top-line figures</a>
+        </h2>
         <div class="infoboxes">
+          {# the includes will check if data is actually available #}
           {% include "templates/includes/funding.template.html" %}
           {% include "templates/includes/population.template.html" %}
           {% include "templates/includes/pin.template.html" %}
@@ -24,26 +35,29 @@
           {% include "templates/includes/national-risk.template.html" %}
           {% include "templates/includes/operational-presence.template.html" %}
         </div>
-
       </section>
 
-      {% if sectors.length() > 0 %}
-      <section id="sectors">
-        <h2>Sectors</h2>
-        {% for sector in sectors.sort(['name']) %}
-        <section id="{{ sector.code }}">
-          <h3>{{ sector.name }}</h3>
-          <div class="infoboxes">
-            {% include "templates/includes/pin.template.html" %}
-            {% include "templates/includes/operational-presence.template.html" %}
-          </div>
-        </section>
-        {% endfor %}
+      {# Sector-specific key figures #}
+      {% for sector in sectors.sort(['name']) %}
+      <section id="{{ sector.code }}">
+        <h2>
+          <a href="#{{ sector.code }}">
+            <img alt="Blue humanitarian icon for {{ sector.name }}" class="icon" src="img/{{ sector.code }}.svg" />
+            {{ sector.name }}
+          </a>
+        </h2>
+        <div class="infoboxes">
+          {# the includes will filter based on sector.code #}
+          {% include "templates/includes/pin.template.html" %}
+          {% include "templates/includes/operational-presence.template.html" %}
+        </div>
       </section>
-      {% endif %}
+      {% endfor %}
+
     </main>
 
     <aside>
+      {# Will render as another inline section in mobile #}
       <section id="admin1">
         <h2>Administrative level 1 subdivisions</h2>
         <div class="content">

@@ -3,11 +3,14 @@
 {% else %}
 {% set sector_code = 'Intersectoral' %}
 {% endif %}
-{% if humanitarian_needs.data.withRows("sector_code", sector_code).length() > 0 %}
+
 {% set filtered_pin = humanitarian_needs.data.withRows("sector_code", sector_code).withRows("age_range", "ALL").cache() %}
+{% if filtered_pin.length() > 0 %}
+
 {% for status in [["INN", "People in need"], ["TGT", "Targeted for assistance"]] %}
-{% set pin_date = filtered_pin.max("reference_period_start") %}
-{% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_start", pin_date).cache() %}
+{% set pin_date = filtered_pin.max("reference_period_end") %}
+{% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_end", pin_date).cache() %}
+{% if latest_pin.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
     <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
@@ -32,5 +35,7 @@
   <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}&amp;sector_code={{ sector_code }}">data</a>
   {% endif %}
 </div>
+{% endif %}
 {% endfor %}
+
 {% endif %}

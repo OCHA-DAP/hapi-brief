@@ -1,17 +1,14 @@
-{% if funding.has_data > 0 %}
-{% for appeal in funding.data.withRows("reference_period_start", funding.latest_date) %}
+{% if funding.data.length() > 0 %}
+{% for appeal in funding.data.withRows("reference_period_end", funding.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <b class="label"><cite>{{ appeal.appeal_name }}</cite></b>
+    <span class="label"><cite>{{ appeal.appeal_name }}</cite></span>
+    <span class="figure">USD {{ appeal.requirements_usd | nfmt }}</span>
   </div>
   <table class="supplemental-figures">
     <tr>
-      <td>Required (USD):</td>
-      <td>{{ appeal.requirements_usd | nfmt }}</td>
-    </tr>
-    <tr>
-      <td>Funded (USD):</td>
-      <td>{{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)</td>
+      <td>funded</td>
+      <td>${{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)</td>
     </tr>
   </table>
   <span class="sources">{{ funding.sources | join(", ") }}</span>

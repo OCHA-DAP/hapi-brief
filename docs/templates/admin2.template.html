@@ -1,41 +1,53 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <title>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }}</title>
     {% include "templates/includes/html-headers.template.html" %}
   </head>
+
   <body>
+
     <header>
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }} ({{ admin2.code }})</h1>
     </header>
+
     <main>
 
-      <section class="infoboxes">
-
-        {% include "templates/includes/population.template.html" %}
-        {% include "templates/includes/pin.template.html" %}
-        {% include "templates/includes/idps.template.html" %}
-        {% include "templates/includes/operational-presence.template.html" %}
-        {% include "templates/includes/food-price.template.html" %}
-
+      <section id="top-line">
+        <h2>
+          <a href="#top-line">Top-line figures</a>
+        </h2>
+        <div class="infoboxes">
+          {# the includes will check if data is actually available #}
+          {% include "templates/includes/population.template.html" %}
+          {% include "templates/includes/pin.template.html" %}
+          {% include "templates/includes/idps.template.html" %}
+          {% include "templates/includes/operational-presence.template.html" %}
+          {% include "templates/includes/food-price.template.html" %}
+        </div>
       </section>
 
-      {% if sectors.length() > 0 %}
-      <section id="sectors">
-        <h2>Sectors</h2>
-        {% for sector in sectors.sort(['name']) %}
-        <section id="{{ sector.code }}">
-          <h3>{{ sector.name }}</h3>
-          <div class="infoboxes">
-            {% include "templates/includes/pin.template.html" %}
-            {% include "templates/includes/operational-presence.template.html" %}
-          </div>
-        </section>
-        {% endfor %}
+      {# Include an additional section for each available sector #}
+      {% for sector in sectors.sort(['name']) %}
+      <section id="{{ sector.code }}">
+        <h2>
+          <a href="#{{ sector.code }}">
+            <img alt="Blue humanitarian icon for {{ sector.name }}" class="icon" src="img/{{ sector.code }}.svg" />
+            {{ sector.name }}
+          </a>
+        </h2>
+        <div class="infoboxes">
+          {# the includes will filter based on sector.code #}
+          {% include "templates/includes/pin.template.html" %}
+          {% include "templates/includes/operational-presence.template.html" %}
+        </div>
       </section>
-      {% endif %}
+      {% endfor %}
 
     </main>
+
   </body>
+
 </html>
