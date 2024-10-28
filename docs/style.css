@@ -123,7 +123,7 @@ table.data tbody tr:last-of-type {
     width: 15rem;
     padding: 1rem 1rem 3rem 1rem;
     border-radius: 1rem;
-    background: #eeeeff;
+    background: #ccccff;
     margin-right: 1rem;
     margin-bottom: 1rem;
 }
@@ -132,7 +132,7 @@ table.data tbody tr:last-of-type {
     display: block;
     font-weight: bold;
     font-style: italic;
-    color: #440044;
+    color: #000044;
     font-size: 83.33333%;
     margin-bottom: .5rem;
 }
@@ -214,8 +214,6 @@ table.data tbody tr:last-of-type {
         width: 19vw;
         right: 1vw;
         top: 8rem;
-        border-radius: 1rem;
-        background: #eeffee;
         padding: 1ex;
     }
 
