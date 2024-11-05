@@ -1,9 +1,14 @@
-////////////////////////////////////////////////////////////////////////
-// Dynamic streaming data filters.
-//
-// Started 2024-10 by David Megginson
-// Public Domain
-////////////////////////////////////////////////////////////////////////
+/****************************************************************
+ *Dynamic streaming data filters.
+ *
+ * Usage:
+ *
+ *  data = new DF.Data(raw_data);
+ *  
+ *
+ * Started 2024-10 by David Megginson
+ * Public Domain
+ ****************************************************************/
 
 
 // Pseudo-namespace (change into module later)
@@ -25,6 +30,9 @@ DF.Data = class {
     // Value aggregators
     //
 
+    /**
+     * Sum of all numeric values with the given key.
+     */
     sum (key) {
         let result = null;
         for (let row of this) {
@@ -33,6 +41,9 @@ DF.Data = class {
         return result;
     }
 
+    /**
+     * Minimum value for the given key (numeric or lexical)
+     */
     min (key) {
         let result = null;
         for (let row of this) {
@@ -45,6 +56,9 @@ DF.Data = class {
         return result;
     }
 
+    /**
+     * Maximum value for the given key (numeric or lexical)
+     */
     max (key) {
         let result = null;
         for (let row of this) {
@@ -57,6 +71,9 @@ DF.Data = class {
         return result;
     }
 
+    /**
+     * Average (mean) value for the given key.
+     */
     average (key) {
         let result = null;
         let count = 0;
@@ -68,9 +85,9 @@ DF.Data = class {
         return result;
     }
 
-    stddev (key) {
-    }
-
+    /**
+     * List of all unique values for the given key.
+     */
     values (key) {
         let values = new Set();
         for (let row of this) {
@@ -79,6 +96,9 @@ DF.Data = class {
         return Array.from(values);
     }
 
+    /**
+     * Test if a specific value appears for the key anywhere in the dataset.
+     */
     contains (key, value) {
         for (let row of this) {
             if (row[key] == value) {
@@ -180,7 +200,7 @@ DF.Data = class {
 }
 
 /**
- * Abstract base class for caching classes.
+ * Base class for caching filters.
  */
 DF.Cache = class extends DF.Data {
 
@@ -189,6 +209,13 @@ DF.Cache = class extends DF.Data {
         this.cached = null;
     }
 
+    /**
+     * Collect the incoming data and modify as needed.
+     *
+     * Result goes into this.cached.
+     *
+     * Override this method in derived caches.
+     */
     collect () {
         let rows = [];
         for (var row of this.source) {
@@ -196,7 +223,8 @@ DF.Cache = class extends DF.Data {
         }
         return rows;
     }
-    
+
+    // Iterate over the cached data rather than the source.
     [Symbol.iterator]() {
         if (this.cached === null) {
             this.cached = this.collect();
@@ -209,7 +237,7 @@ DF.Cache = class extends DF.Data {
 
 
 /**
- * Return only rows that pass the test supplied.
+ * Streaming filter: return only rows that pass the test supplied.
  */
 DF.Select = class extends DF.Data {
 
@@ -219,7 +247,6 @@ DF.Select = class extends DF.Data {
     }
 
     [Symbol.iterator]() {
-        let index = 0;
         let it = this.source[Symbol.iterator]();
         let test = this.test;
 
@@ -242,7 +269,7 @@ DF.Select = class extends DF.Data {
 
 
 /**
- * Aggregate a dependent variable for a set of independent variables.
+ * Caching filter: aggregate a dependent variable for a set of independent variables.
  */
 DF.Aggregate = class extends DF.Cache {
 
@@ -300,7 +327,7 @@ DF.Aggregate = class extends DF.Cache {
 }
 
 /**
- * Sort data by the keys provided
+ * Caching filter: sort data by the keys provided
  */
 DF.Sort = class extends DF.Cache {
 

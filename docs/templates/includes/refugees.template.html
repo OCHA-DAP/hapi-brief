@@ -2,9 +2,9 @@
 {% set latest_refugees = refugees.data.withRows("reference_period_end", refugees.latest_date).withRows("age_range", "all").cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ refugees.latest_date | truncate(4, true, "") }}</span>
     <span class="label">Refugees</span>
-    <span class="figure">{{ latest_refugees.withRows("gender", "all").sum("population") | nfmt }}</span>
+    {% set n=latest_refugees.withRows("gender", "all").sum("population") %}
+    {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
     {% for gender in [["f", "female"], ["m", "male"]] %}
@@ -12,12 +12,23 @@
     {% if population > 0 %}
     <tr>
       <td>{{ gender[1] }}</td>
-      <td>{{ population | nfmt }}</td>
+      <td>
+        {% set n=population %}
+        {% include "templates/includes/supplemental-figure.template.html" %}
     </tr>
     {% endif %}
     {% endfor %}
   </table>
-  <span class="sources">{{ refugees.sources | join(", ") }}</span>
-  <a class="data-link" href="table.html?category=affected-people&amp;subcategory=refugees&amp;location-code={{location.code}}">data</a>
+  <div class="metadata">
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=refugees&amp;location-code={{location.code}}">data</a>
+
+    |
+
+    <span class="date">{{ refugees.latest_date | truncate(4, true, "") }}</span>
+
+    <br />
+    
+    <span class="sources">{{ refugees.sources | join(", ") }}</span>
+  </div>
 </div>
 {% endif %}

@@ -9,6 +9,26 @@ body {
     margin: 1rem;
 }
 
+section {
+    margin-bottom: 2rem;
+}
+
+h2 {
+    font-family: 'Gotham-Bold', sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000000;
+    line-height: 2rem;
+    padding-left: 1rem;
+    margin-left: -1rem;
+}
+
+main h2 {
+    background-color: #EDF6FD;
+    border-bottom: 1px solid #CCC;
+    margin-bottom: 0;
+}
+
 .jump-links {
     font-size: 83.33333%;
     color: #aaaaaa;
@@ -116,36 +136,33 @@ table.data tbody tr:last-of-type {
 .infoboxes {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
 }
 
 .infobox {
     position: relative;
-    width: 15rem;
-    padding: 1rem 1rem 3rem 1rem;
-    border-radius: 1rem;
-    background: #eeeeff;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
+    width: 20rem;
+    padding: 1rem 0 5rem 0;
+    margin: 0 1rem 1rem 0;
+    border-bottom: 1px solid #CCC;
+}
+
+.key-figure {
 }
 
 .key-figure .label {
     display: block;
+    font-family: 'Gotham-Bold', sans-serif;
     font-weight: bold;
-    font-style: italic;
-    color: #000044;
-    font-size: 83.33333%;
     margin-bottom: .5rem;
+    height: 3rem;
+    vertical-align: bottom;
 }
 
 .key-figure .figure {
-    font-size: 144%;
-    margin-bottom: .5rem;
-}
-
-.key-figure .date {
-    display: inline-block;
-    font-size: 83.33333%;
-    float: right;
+    font-size: 172.8%;
+    line-height: 2rem;
+    margin-bottom: 2rem;
 }
 
 .supplemental-figures {
@@ -154,13 +171,21 @@ table.data tbody tr:last-of-type {
     width: 100%;
 }
 
-.sources {
-    font-size: 57.870370%;
-    display: inline-block;
-    max-width: 66.66666%;
+.metadata {
     position: absolute;
-    left: 1rem;
     bottom: 1rem;
+    left: 1rem;
+    height: 3rem;
+    margin-top: 1rem;
+    color: #888;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 83.333333%;
+    line-height: 1.2rem;
+}
+
+.data-link {
+    text-transform: uppercase;
+    text-decoration: none;
 }
 
 .columns {
@@ -168,13 +193,6 @@ table.data tbody tr:last-of-type {
     columns: 5;
     column-gap: 2em;
     column-width: 20em;
-}
-
-.data-link {
-    font-size: 57.870370%;
-    position:absolute;
-    right: 1rem;
-    bottom: 1rem;
 }
 
 
@@ -197,12 +215,8 @@ table.data tbody tr:last-of-type {
 
 @media (min-width: 1200px) {
 
-    .with-sidebar header {
-        height: 7rem;
-    }
-
-    .with-sidebar main {
-        width: 80vw;
+    .with-sidebar header, .with-sidebar main {
+        width: 75vw;
     }
 
     .with-sidebar header .jump-links {
@@ -213,17 +227,13 @@ table.data tbody tr:last-of-type {
         position: absolute;
         width: 19vw;
         right: 1vw;
-        top: 8rem;
+        top: 1rem;
         padding: 1ex;
     }
 
     aside .content {
         columns: 1;
         margin-left: 1rem;
-    }
-
-    aside h2 {
-        font-size: 100%;
     }
 
 }

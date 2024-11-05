@@ -2,9 +2,9 @@
 {% set latest_population = population.data.withRows("reference_period_end", population.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ population.latest_date | truncate(4, true, "") }}</span>
     <span class="label">Total population</span>
-    <span class="figure">{{ latest_population.withRows("gender", "all").last().population | nfmt }}</span>
+    {% set n=latest_population.withRows("gender", "all").last().population %}
+    {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
     {% for gender in [["f", "female"], ["m", "male"]] %}
@@ -12,12 +12,24 @@
     {% if population > 0 %}
     <tr>
       <td>{{ gender[1] }}</td>
-      <td>{{ population | nfmt }}</td>
+      <td>
+        {% set n=population %}
+        {% include "templates/includes/supplemental-figure.template.html" %}
+      </td>
     </tr>
     {% endif %}
     {% endfor %}
   </table>
-  <span class="sources">{{ population.sources | join(", ") }}</span>
-  <a class="data-link" href="table.html?category=population-social&amp;subcategory=population&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
+  <div class="metadata">
+    <a class="data-link" href="table.html?category=population-social&amp;subcategory=population&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
+
+    |
+
+    <span class="date">{{ population.latest_date | truncate(10, true, "") }}</span>
+
+    <br />
+    
+    <span class="sources">{{ population.sources | join(", ") }}</span>
+  </div>
 </div>
 {% endif %}

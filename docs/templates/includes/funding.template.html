@@ -3,16 +3,30 @@
 <div class="infobox">
   <div class="key-figure">
     <span class="label"><cite>{{ appeal.appeal_name }}</cite></span>
-    <span class="figure">USD {{ appeal.requirements_usd | nfmt }}</span>
+    {% set n=appeal.requirements_usd %}
+    USD {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
     <tr>
       <td>funded</td>
-      <td>${{ appeal.funding_usd | nfmt }} ({{ appeal.funding_pct }}%)</td>
+      <td>
+        {% set n=appeal.funding_usd %}
+        USD {% include "templates/includes/supplemental-figure.template.html" %}
+        ({{ appeal.funding_pct }}%)
+      </td>
     </tr>
   </table>
-  <span class="sources">{{ funding.sources | join(", ") }}</span>
-  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=funding&amp;location-code={{location.code}}">data</a>
+  <div class="metadata">
+    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=funding&amp;location-code={{location.code}}">data</a>
+
+    |
+
+    <span class="date">{{ funding.latest_date | truncate(4, true, "") }}</span>
+    
+    <br />
+
+    <span class="sources">{{ funding.sources | join(", ") }}</span>
+  </div>
 </div>
 {% endfor %}
 {% endif %}

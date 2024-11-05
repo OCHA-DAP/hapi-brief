@@ -41,7 +41,7 @@ let nunjucks_env = nunjucks.configure({
     autoescape: true,
     web: { async: false }
 });
-nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat().format(n)));
+nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat("en", { maximumSignificantDigits: 3 }).format(n)));
 
 //
 // Page-rendering functions

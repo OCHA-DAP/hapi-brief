@@ -1,11 +1,8 @@
 {% if conflict_event.has_data %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ conflict_event.latest_date | truncate(7, true, "") }}</span>
     <span class="label">Conflict fatalities (last 90 days)</span>
     <span class="figure">{{ conflict_event.data.sum('fatalities') | nfmt }}</span>
-    <span class="sources">{{ conflict_event.sources | join(", ") }}</span>
-    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=conflict-event&amp;{{ geo_type }}-code={{geo.code}}">data</a>
   </div>
   <table class="supplemental-figures">
     {% for event_type in conflict_event.data.values("event_type") %}
@@ -18,5 +15,16 @@
     {% endif %}
   {% endfor %}
   </table>
+  <div class="metadata">
+    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=conflict-event&amp;{{ geo_type }}-code={{geo.code}}">data</a>
+
+    |
+    
+    <span class="date">{{ conflict_event.latest_date | truncate(7, true, "") }}</span>
+
+    <br />
+    
+    <span class="sources">{{ conflict_event.sources | join(", ") }}</span>
+  </div>
 </div>
 {% endif %}

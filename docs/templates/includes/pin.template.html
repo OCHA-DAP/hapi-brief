@@ -13,9 +13,9 @@
 {% if latest_pin.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
     <span class="label">{{ status[1] }}</span>
-    <span class="figure">{{ latest_pin.withRows("gender", "all").last().population | nfmt }}</span>
+    {% set n=latest_pin.withRows("gender", "all").last().population %}
+    {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
     {% for gender in [["f", "female"], ["m", "male"]] %}
@@ -23,17 +23,33 @@
     {% if population > 0 %}
     <tr>
       <td>{{ gender[1] }}</td>
-      <td>{{ population | nfmt }}</td>
+      <td>
+        {% set n=population %}
+        {% include "templates/includes/supplemental-figure.template.html" %}
+      </td>
     </tr>
     {% endif %}
     {% endfor %}
   </table>
-  <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
-  {% if sector_code == 'Intersectoral' %}
-  <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
-  {% else %}
-  <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}&amp;sector_code={{ sector_code }}">data</a>
-  {% endif %}
+
+  <div class="metadata">
+  
+    {% if sector_code == 'Intersectoral' %}
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
+    {% else %}
+    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}&amp;sector_code={{ sector_code }}">data</a>
+    {% endif %}
+
+    |
+
+    <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
+
+    <br />
+
+    <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
+
+  </div>
+
 </div>
 {% endif %}
 {% endfor %}

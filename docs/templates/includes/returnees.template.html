@@ -12,7 +12,10 @@
     {% if population > 0 %}
     <tr>
       <td>{{ gender[1] }}</td>
-      <td>{{ population | nfmt }}</td>
+      <td>
+        {% set n=population %}
+        {% include "templates/includes/supplemental-figure.template.html" %}
+      </td>
     </tr>
     {% endif %}
     {% endfor %}

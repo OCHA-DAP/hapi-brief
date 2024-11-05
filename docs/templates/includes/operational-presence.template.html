@@ -14,9 +14,9 @@ then provide a breakdown by org type in the supplemental figures.
 {% if op_filtered.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ operational_presence.latest_date | truncate(7, true, "") }}</span>
     <span class="label">Organisations responding</span>
-    <span class="figure">{{ op_filtered.length() }}</span>
+    {% set n=op_filtered.length() %}
+    {% include "templates/includes/key-figure.template.html" %} org(s)
   </div>
   <table class="supplemental-figures">
     {% for type in op_filtered.values("org_type_description") | sort %}
@@ -26,20 +26,23 @@ then provide a breakdown by org type in the supplemental figures.
     </tr>
     {% endfor %}
   </table>
-  <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
-  {% if sector %}
-  {% if op_use_provider_name %}
-  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
-  {% else %}
-  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}">data</a>
-  {% endif %}
-  {% else %}
-  {% if op_use_provider_name %}
-  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
-  {% else %}
-  <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;{{ geo_type }}-code={{geo.code}}">data</a>
-  {% endif %}
-  {% endif %}
+  <div class="metadata">
+
+    {% if op_use_provider_name %}
+    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
+    {% else %}
+    <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}">data</a>
+    {% endif %}
+ 
+    |
+
+    <span class="date">{{ operational_presence.latest_date | truncate(7, true, "") }}</span>
+
+    <br />
+    
+    <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
+  </div>
+  
 </div>
 {% endif %}
 {% endif %}
