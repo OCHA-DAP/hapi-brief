@@ -124,7 +124,7 @@ table.data tbody tr:nth-of-type(even) {
 }
 
 table.data tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
+    border-bottom: 2px solid ##5b92e5;
 }
 
 
