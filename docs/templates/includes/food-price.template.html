@@ -8,7 +8,7 @@
   </div>
   <table class="supplemental-figures">
     {% set commodities = latest_food_price.values('commodity_name') %}
-    {% for i in [0, 1, 2, 3, 4, 5] %}
+    {% for i in [0, 1, 2, 4, 5 ] %}
     {% set commodity_name=commodities[i] %}
     {% if commodity_name %}
     {% set commodity_price =latest_food_price.withRows('commodity_name', commodity_name) %}
@@ -26,6 +26,11 @@
     {% endif %}
     {% endif %}
     {% endfor %}
+    {% if latest_food_price.values('commodity_name').length > 5 %}
+    <tr>
+      <td>...</td>
+    </tr>
+    {% endif %}
   </table>
 
   <div class="metadata">
