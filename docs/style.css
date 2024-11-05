@@ -5,7 +5,7 @@
  */
 
 body {
-    font-family: Helvetica, Ariel, sanserif;
+    font-family: Gotham, sans-serif;
     margin: 1rem;
 }
 
@@ -99,8 +99,7 @@ table.data {
 }
 
 table.data thead tr {
-    background-color: #009879;
-    color: #ffffff;
+    background-color: #EDF6FD;
     text-align: left;
 }
 
@@ -141,28 +140,37 @@ table.data tbody tr:last-of-type {
 
 .infobox {
     position: relative;
-    width: 20rem;
+    width: 15rem;
     padding: 1rem 0 5rem 0;
     margin: 0 1rem 1rem 0;
     border-bottom: 1px solid #CCC;
 }
 
 .key-figure {
+    margin-bottom: .5rem;
 }
 
 .key-figure .label {
+    position: relative;
+    width: 100%;
     display: block;
     font-family: 'Gotham-Bold', sans-serif;
     font-weight: bold;
     margin-bottom: .5rem;
     height: 3rem;
-    vertical-align: bottom;
+    vertical-align: middle;
+}
+
+.key-figure .label .inner {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
 }
 
 .key-figure .figure {
     font-size: 172.8%;
     line-height: 2rem;
-    margin-bottom: 2rem;
 }
 
 .supplemental-figures {

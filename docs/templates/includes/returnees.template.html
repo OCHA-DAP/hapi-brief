@@ -2,7 +2,9 @@
 {% set latest_returnees = returnees.data.withRows("reference_period_end", returnees.latest_date).withRows("age_range", "all").cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">Returnees</span>
+    <span class="label">
+      <span class="inner">Returnees</span>
+    </span>
     <span class="figure">{{ latest_returnees.withRows("gender", "all").sum("population") | nfmt }}</span>
   </div>
   <table class="supplemental-figures">

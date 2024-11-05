@@ -1,16 +1,21 @@
 {% if conflict_event.has_data %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">Conflict fatalities (last 90 days)</span>
-    <span class="figure">{{ conflict_event.data.sum('fatalities') | nfmt }}</span>
+    <span class="label">
+      <span class="inner">Conflict events (last 90 days)</span>
+    </span>
+    {% set n=conflict_event.data.sum('fatalities') %}
+    {% include "templates/includes/key-figure.template.html" %} fatalities
   </div>
   <table class="supplemental-figures">
     {% for event_type in conflict_event.data.values("event_type") %}
-    {% set value = conflict_event.data.withRows("event_type", event_type).sum('events') %}
-    {% if value > 0 %}
+    {% set n = conflict_event.data.withRows("event_type", event_type).sum('events') %}
+    {% if n > 0 %}
     <tr>
       <td>{{ event_type | replace("_", " ") }} events:</td>
-      <td>{{ value | nfmt }}</td>
+      <td>
+        {% include "templates/includes/supplemental-figure.template.html" %}
+      </td>
     </tr>
     {% endif %}
   {% endfor %}

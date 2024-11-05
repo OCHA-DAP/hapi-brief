@@ -2,7 +2,9 @@
 {% set latest_population = population.data.withRows("reference_period_end", population.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">Total population</span>
+    <span class="label">
+      <span class="inner">Total population</span>
+    </span>
     {% set n=latest_population.withRows("gender", "all").last().population %}
     {% include "templates/includes/key-figure.template.html" %}
   </div>

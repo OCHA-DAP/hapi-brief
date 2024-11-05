@@ -2,7 +2,9 @@
 {% set latest_refugees = refugees.data.withRows("reference_period_end", refugees.latest_date).withRows("age_range", "all").cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">Refugees</span>
+    <span class="label">
+      <span class="inner">Refugees</span>
+    </span>
     {% set n=latest_refugees.withRows("gender", "all").sum("population") %}
     {% include "templates/includes/key-figure.template.html" %}
   </div>

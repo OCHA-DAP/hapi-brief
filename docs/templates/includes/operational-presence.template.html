@@ -14,7 +14,9 @@ then provide a breakdown by org type in the supplemental figures.
 {% if op_filtered.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">Organisations responding</span>
+    <span class="label">
+      <span class="inner">Organisations responding</span>
+    </span>
     {% set n=op_filtered.length() %}
     {% include "templates/includes/key-figure.template.html" %} org(s)
   </div>

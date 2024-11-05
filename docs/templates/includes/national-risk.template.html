@@ -2,7 +2,9 @@
 {% set latest_national_risk = national_risk.data.withRows("reference_period_end", national_risk.latest_date).cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">National risk</span>
+    <span class="label">
+      <span class="inner">National risk</span>
+    </span>
     <span class="figure">{{ latest_national_risk.last().overall_risk }} / 10</span>
   </div>
   <table class="supplemental-figures">

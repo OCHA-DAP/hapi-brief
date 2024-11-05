@@ -2,8 +2,9 @@
 {% set latest_poverty_rate = poverty_rate.data.withRows("reference_period_end", poverty_rate.latest_date).cache() %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="date">{{ poverty_rate.latest_date | truncate(4, true, "") }}</span>
-    <span class="label">Multidimensional Poverty (MPI)</span>
+    <span class="label">
+      <span class="inner">Multidimensional Poverty (MPI)</span>
+    </span>
     <span class="figure">{{ (latest_poverty_rate.last().headcount_ratio) | nfmt | truncate(4, true, "") }}%</span>
   </div>
   <table class="supplemental-figures">
@@ -16,7 +17,12 @@
       <td>{{ latest_poverty_rate.last().vulnerable_to_poverty | nfmt | truncate(4, true, "") }}%</td>
     </tr>
   </table>
-  <span class="sources">{{ poverty_rate.sources | join(", ") }}</span>
-  <a class="data-link" href="table.html?category=population-social&amp;subcategory=poverty-rate&amp;location-code={{admin1.location_code}}&amp;provider-admin1-name={{admin1.name}}">data</a>
+  <div class="metadata">
+    <a class="data-link" href="table.html?category=population-social&amp;subcategory=poverty-rate&amp;location-code={{admin1.location_code}}&amp;provider-admin1-name={{admin1.name}}">data</a>
+    |
+    <span class="date">{{ poverty_rate.latest_date | truncate(4, true, "") }}</span>
+    <br />
+    <span class="sources">{{ poverty_rate.sources | join(", ") }}</span>
+  </div>
 </div>
 {% endif %}

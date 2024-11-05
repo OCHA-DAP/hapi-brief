@@ -2,7 +2,9 @@
 {% for appeal in funding.data.withRows("reference_period_end", funding.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label"><cite>{{ appeal.appeal_name }}</cite></span>
+    <span class="label">
+      <cite class="inner">{{ appeal.appeal_name }}</cite>
+    </span>
     {% set n=appeal.requirements_usd %}
     USD {% include "templates/includes/key-figure.template.html" %}
   </div>

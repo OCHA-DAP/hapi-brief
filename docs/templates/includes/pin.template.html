@@ -13,7 +13,9 @@
 {% if latest_pin.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">{{ status[1] }}</span>
+    <span class="label">
+      <span class="inner">{{ status[1] }}</span>
+    </span>
     {% set n=latest_pin.withRows("gender", "all").last().population %}
     {% include "templates/includes/key-figure.template.html" %}
   </div>

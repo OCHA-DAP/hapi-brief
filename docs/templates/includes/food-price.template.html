@@ -3,7 +3,9 @@
 {% set currency_code = latest_food_price.last().currency_code %}
 <div class="infobox">
   <div class="key-figure">
-    <span class="label">Sample food prices ({{ currency_code }})</span>
+    <span class="label">
+      <span class="inner">Food prices</span>
+    </span>
     <span class="figure">{{ latest_food_price.values('commodity_name').length | nfmt }}</span> commodities
   </div>
   <table class="supplemental-figures">
