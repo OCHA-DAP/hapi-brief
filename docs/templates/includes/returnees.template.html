@@ -5,7 +5,8 @@
     <span class="label">
       <span class="inner">Returnees</span>
     </span>
-    <span class="figure">{{ latest_returnees.withRows("gender", "all").sum("population") | nfmt }}</span>
+    {% set n=latest_returnees.withRows("gender", "all").sum("population") %}
+    {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
     {% for gender in [["f", "female"], ["m", "male"]] %}
