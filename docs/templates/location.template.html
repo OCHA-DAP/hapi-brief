@@ -11,7 +11,7 @@
     <header>
       {% set geo=location %}
       {% include "templates/includes/breadcrumbs.template.html" %}
-      <h1>{{ location.name }}</h1>
+      <h1>{{ location.name }} ({{ location.code }})</h1>
       <nav class="jump-links">
         <b>Jump to:</b>
         <a href="#admin1">Administrative subdivisions</a>
@@ -29,7 +29,7 @@
           {# the includes will check if data is actually available #}
           {% include "templates/includes/funding.template.html" %}
           {% include "templates/includes/population.template.html" %}
-          {% include "templates/includes/pin.template.html" %}
+          {% include "templates/includes/humanitarian-needs.template.html" %}
           {% include "templates/includes/refugees.template.html" %}
           {% include "templates/includes/returnees.template.html" %}
           {% include "templates/includes/idps.template.html" %}
@@ -49,7 +49,7 @@
         </h2>
         <div class="infoboxes">
           {# the includes will filter based on sector.code #}
-          {% include "templates/includes/pin.template.html" %}
+          {% include "templates/includes/humanitarian-needs.template.html" %}
           {% include "templates/includes/operational-presence.template.html" %}
         </div>
       </section>
