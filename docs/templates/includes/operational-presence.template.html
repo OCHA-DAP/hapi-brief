@@ -18,7 +18,7 @@ then provide a breakdown by org type in the supplemental figures.
       <span class="inner">Organisations responding</span>
     </span>
     {% set n=op_filtered.length() %}
-    {% include "templates/includes/key-figure.template.html" %} org(s)
+    {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
     {% for type in op_filtered.values("org_type_description") | sort %}

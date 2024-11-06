@@ -19,11 +19,16 @@
       {% set min_price = commodity_price.min('price') %}
       {% set max_price = commodity_price.max('price') %}
       <td>{{ commodity_name }}</td>
-      {% if min_price == max_price %}
-      <td>{{ currency_code }} {{ max_price | nfmt }}</td>
-      {% else %}
-      <td>{{ currency_code }} {{ min_price | nfmt }}–{{ max_price | nfmt }}</td>
-      {% endif %}
+      <td>
+        {{ currency_code }}
+        {% if min_price != max_price %}
+        {% set n=min_price %}
+        {% include "templates/includes/supplemental-figure.template.html" %}
+        –
+        {% endif %}
+        {% set n=max_price %}
+        {% include "templates/includes/supplemental-figure.template.html" %}
+      </td>
     </tr>
     {% endif %}
     {% endif %}

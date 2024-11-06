@@ -20,47 +20,4 @@
     <span class="sources">{{ idps.sources | join(", ") }}</span>
   </div>
 </div>
-
-{% elseif humanitarian_needs.data.withRows("population_group", "IDP").withRows("sector_code", "Intersectoral").length() > 0 %}
-{% set data = humanitarian_needs.data.withRows("population_group", "IDP").withRows("sector_code", "Intersectoral").cache() %}
-{% set latest_idps = data.withRows(idps.latest_date) %}
-<div class="infobox">
-  <div class="key-figure">
-    <span class="label">
-      <span class="inner">IDPs</span>
-    </span>
-    {% set n=latest_idps.withRows("gender", "all").last().population %}
-    {% include "templates/includes/key-figure.template.html" %}
-  </div>
-  <table class="supplemental-figures">
-    {% if latest_idps.contains("gender", "f") %}
-    <tr>
-      <td>female:</td>
-      <td>{{ latest_idps.withRows("gender", "f").sum("population") | nfmt }}</td>
-    </tr>
-    {% endif %}
-    {% if latest_idps.contains("gender", "m") %}
-    <tr>
-      <td>male</td>
-      <td>{{ latest_idps.withRows("gender", "m").sum("population") | nfmt }}</td>
-    </tr>
-    {% endif %}
-  </table>
-
-  <div class="metadata">
-
-    <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{geo.code}}">data</a>
-
-    |
-    
-    <span class="date">{{ idps.latest_date | truncate(7, true, "") }}</span>
-
-    <br />
-    
-    <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
-
-  </div>
-  
-</div>
-
 {% endif %}

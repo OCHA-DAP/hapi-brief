@@ -140,9 +140,9 @@ table.data tbody tr:last-of-type {
 
 .infobox {
     position: relative;
-    width: 15rem;
+    width: 20rem;
     padding: 1rem 0 5rem 0;
-    margin: 0 1rem 1rem 0;
+    margin: 0 2rem 1rem 0;
     border-bottom: 1px solid #CCC;
 }
 
@@ -151,21 +151,11 @@ table.data tbody tr:last-of-type {
 }
 
 .key-figure .label {
-    position: relative;
     width: 100%;
     display: block;
     font-family: 'Gotham-Bold', sans-serif;
     font-weight: bold;
     margin-bottom: .5rem;
-    height: 3rem;
-    vertical-align: middle;
-}
-
-.key-figure .label .inner {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    bottom: 0;
 }
 
 .key-figure .figure {
