@@ -16,8 +16,15 @@
     <span class="label">
       <span class="inner">{{ status[1] }}</span>
     </span>
+    {% if "total" in latest_pin.values("category") %}
     {% set n=latest_pin.withRows("category", "total").last().population %}
+    {% elseif "" in latest_pin.values("category") %}
+    {% set n=latest_pin.withRows("category", "").last().population %}
+    {% endif %}
+
+    {% if n %}
     {% include "templates/includes/key-figure.template.html" %}
+    {% endif %}
   </div>
   <table class="supplemental-figures">
     {% for category in latest_pin.values("category") %}
