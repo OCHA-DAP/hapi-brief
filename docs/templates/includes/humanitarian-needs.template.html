@@ -4,7 +4,7 @@
 {% set sector_code = 'Intersectoral' %}
 {% endif %}
 
-{% set filtered_pin = humanitarian_needs.data.withRows("sector_code", sector_code).withRows("age_range", "ALL").cache() %}
+{% set filtered_pin = humanitarian_needs.data.withRows("sector_code", sector_code).cache() %}
 {% if filtered_pin.length() > 0 %}
 
 {% for status in [["AFF", "People affected"], ["INN", "People in need"], ["TGT", "Targeted for assistance"]] %}
@@ -16,15 +16,15 @@
     <span class="label">
       <span class="inner">{{ status[1] }}</span>
     </span>
-    {% set n=latest_pin.withRows("gender", "all").last().population %}
+    {% set n=latest_pin.withRows("category", "total").last().population %}
     {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
-    {% for gender in [["f", "female"], ["m", "male"]] %}
-    {% set population = latest_pin.withRows("gender", gender[0]).last().population %}
-    {% if population > 0 %}
+    {% for category in latest_pin.values("category") %}
+    {% set population = latest_pin.withRows("category", category).last().population %}
+    {% if category not in ["", "total"] and population > 0 %}
     <tr>
-      <td>{{ gender[1] }}</td>
+      <td>{{ category }}</td>
       <td>
         {% set n=population %}
         {% include "templates/includes/supplemental-figure.template.html" %}

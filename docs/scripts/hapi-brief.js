@@ -64,7 +64,7 @@ async function render_locations () {
         params.in_gho = true;
     }
     info.locations = await get_data("metadata", "location", params);
-    nunjucks.render('templates/locations.template.html', info, redraw_html);
+    draw_page('templates/locations.template.html', info);
 }
 
 
@@ -103,7 +103,7 @@ async function render_location () {
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
     // Render the page
-    nunjucks.render('templates/location.template.html', info, redraw_html);
+    draw_page('templates/location.template.html', info);
 }
 
 
@@ -138,9 +138,8 @@ async function render_admin1 () {
     info.conflict_event = await get_conflict_event("admin1_code", pcode, 90);
 
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
-    console.log(info.sectors);
 
-    nunjucks.render('templates/admin1.template.html', info, redraw_html);
+    draw_page('templates/admin1.template.html', info);
 }
 
 
@@ -170,7 +169,7 @@ async function render_admin2 () {
 
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
-    nunjucks.render('templates/admin2.template.html', info, redraw_html);
+    draw_page('templates/admin2.template.html', info);
 }
 
 
@@ -234,8 +233,6 @@ async function render_table () {
         info.stop_list.push('admin2_code');
     }
 
-    console.log(info.stop_list);
-    
     info.geo = info.geo.first();
 
     info.title = "Data: " + capitalize(info.subcategory.replace('-', ' ')) + " for " + make_geo_name(info);
@@ -248,7 +245,7 @@ async function render_table () {
 
     info.resources = await get_resources(info.data);
 
-    nunjucks.render('templates/table.template.html', info, redraw_html);
+    draw_page('templates/table.template.html', info);
 }
 
 
@@ -285,12 +282,16 @@ function get_sectors (datasets) {
 /**
  * Redraw the current web page with Nunjucks output.
  */
-function redraw_html (error_message, html) {
-    if (error_message) {
-        alert(error_message);
-    } else {
-        document.documentElement.innerHTML = html;
-    }
+
+async function draw_page (template, info) {
+    loading_message("Drawing page");
+    nunjucks.render(template, info, (error_message, html) => {
+        if (error_message) {
+            alert(error_message);
+        } else {
+            document.documentElement.innerHTML = html;
+        }
+    });
 }
 
 /**
