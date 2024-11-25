@@ -1,5 +1,5 @@
 {% if population.data.length() > 0 %}
-{% set latest_population = population.data.withRows("reference_period_end", population.latest_date) %}
+{% set latest_population = population.data.withRows("age_range", "all").withRows("reference_period_end", population.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
     <span class="label">
