@@ -43,6 +43,7 @@ let nunjucks_env = nunjucks.configure({
 });
 nunjucks_env.addFilter("nfmt", n => (new Intl.NumberFormat("en", { maximumSignificantDigits: 3 }).format(n)));
 
+
 //
 // Page-rendering functions
 //
@@ -83,21 +84,26 @@ async function render_location () {
     // Grab the admin1 list
     info.admin1s = await get_data("metadata", "admin1", { location_code: pcode });
 
-    // Grab the subcategories
-    info.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode });
-    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode });
+    // Get the data availability for filtering (include subnational, so not fully optimised)
+    let availability = await get_data('metadata', 'data-availability', { location_code: info.location.code });
+
+    // Subcategories (as available)
+    info.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode }, availability);
+    info.population.data = info.population.data.withRows('provider_admin1_name', ''); // FIXME temporary HAPI bug work-around
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode }, availability);
     if (info.humanitarian_needs.data.length() == 0) {
-        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, location_code: pcode });
+        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, location_code: pcode }, availability);
     }
     if (info.humanitarian_needs.data.length() == 0) {
-        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, location_code: pcode });
+        // Can't use availability table
+        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, location_code: pcode }, availability);
     }
-    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode });
-    info.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode });
-    info.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode });
-    info.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode });
-    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode });
-    info.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode });
+    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode }, availability);
+    info.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode }, availability);
+    info.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode }, availability);
+    info.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode }, availability);
+    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode }, availability);
+    info.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode }, availability);
 
     // Extract the sectors from 3W and PIN data
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
@@ -121,21 +127,27 @@ async function render_admin1 () {
 
     info.admin2s = await get_data("metadata", "admin2", { admin1_code: pcode });
 
-    info.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode });
-    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode });
+    // Get the data availability table for filtering (includes admin2s, so not optimised)
+    availability = await get_data('metadata', 'data-availability', { admin1_code: info.admin1.code });
+
+    // Subcategories (as available)
+    info.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode }, availability);
+    info.population.data = info.population.data.withRows('provider_admin2_name', ''); // FIXME temporary HAPI bug work-around
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode }, availability);
     if (info.humanitarian_needs.data.length() == 0) {
-        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode });
+        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode }, availability);
     }
-    info.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: info.admin1.location_code, provider_admin1_name: info.admin1.name });
-    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode });
+    info.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: info.admin1.location_code, provider_admin1_name: info.admin1.name }, availability);
+    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode }, availability);
     if (!info.operational_presence.has_data) {
+        // availability does not apply
         info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin1_name: info.admin1.name });
         info.op_use_provider_name = true;
     }
-    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode });
-    info.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode });
+    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode }, availability);
+    info.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode }, availability);
 
-    info.conflict_event = await get_conflict_event("admin1_code", pcode, 90);
+    info.conflict_event = await get_conflict_event("admin1_code", pcode, 90, availability);
 
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
@@ -155,17 +167,22 @@ async function render_admin2 () {
     info.geo = info.admin2;
     info.geo_type = 'admin2';
     
-    info.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode });
-    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode });
-    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode });
+    // Get the data availability table for filtering
+    availability = await get_data('metadata', 'data-availability', { admin2_code: info.admin2.code });
+
+    // Subcategories (as available)
+    info.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode }, availability);
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode }, availability);
+    info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode }, availability);
     if (!info.operational_presence.has_data) {
+        // can't use availability
         info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin2_name: info.admin2.name });
         info.op_use_provider_name = true;
     }
-    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode });
-    info.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode });
+    info.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode }, availability);
+    info.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode }, availability);
 
-    info.conflict_event = await get_conflict_event("admin2_code", pcode, 90);
+    info.conflict_event = await get_conflict_event("admin2_code", pcode, 90, availability);
 
     info.sectors = get_sectors([info.operational_presence, info.humanitarian_needs]);
 
@@ -361,11 +378,11 @@ async function get_resources (data) {
 /**
  * Return conflict events for the past number of days specified
  */
-async function get_conflict_event (property, value, days) {
+async function get_conflict_event (property, value, days, availability) {
     // HAPI can't filter by date, so do that here
     let today = new Date();
     let limit = new Date(new Date().setDate(today.getDate() - days)).toISOString();
-    let result = await get_subcategory("coordination-context", "conflict-event", { [property]: value });
+    let result = await get_subcategory("coordination-context", "conflict-event", { [property]: value }, availability);
     result.data = result.data.filter(r => (r.reference_period_start >= limit));
     return result;
 }
@@ -374,7 +391,12 @@ async function get_conflict_event (property, value, days) {
 /**
  * Return a subcategory object with extra metadata
  */
-async function get_subcategory (category, subcategory, params) {
+async function get_subcategory (category, subcategory, params, availability) {
+
+    if (availability !== null && !availability.contains('subcategory', subcategory)) {
+        return null;
+    }
+    
     let result = {};
     result.params = params;
 
@@ -397,6 +419,9 @@ async function get_subcategory (category, subcategory, params) {
 
 /**
  * Return the first match for a HAPI query.
+ *
+ * This is useful for loading things with unique codes,
+ * where we know there should be only one result (or zero).
  */
 async function get_row (category, subcategory, params) {
     let data = await get_data(category, subcategory, params);
@@ -409,19 +434,24 @@ async function get_row (category, subcategory, params) {
 
 
 /**
- * Download data from HAPI.
+ * Download raw data from HAPI.
  */
 async function get_data (category, subcategory, params) {
     let result = [];
     let finished = false;
     let offset = 0;
 
+    // save the filter parameters as a copy (so that we can add to them)
     params = {...params};
     params['app_identifier'] = API_KEY;
     params['limit'] = PAGE_SIZE;
 
-    loading_message("Loading HAPI data: " + category + " / " + subcategory);
+    // display a loading message so that the user doesn't wonder about delays
+    if (subcategory != "resource") {
+        loading_message("Loading HAPI data: " + category + " / " + subcategory);
+    }
 
+    // read the data in, page by page, until we have all of it
     while (!finished) {
         params['offset'] = offset;
         let url = "https://hapi.humdata.org/api/v1/" + category + "/" + subcategory + "?" + new URLSearchParams(params).toString();
@@ -434,6 +464,8 @@ async function get_data (category, subcategory, params) {
             offset += PAGE_SIZE;
         }
     }
+
+    // wrap the data in a DF.data object, so that we can filter and aggregate it inside the templates (see df.js)
     return new DF.Data(result);
 }
 
