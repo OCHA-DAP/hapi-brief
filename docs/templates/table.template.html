@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  {# Nunjucks template for rendering a data table #}
   <head>
     <title>{{ title }}</title>
     {% include "templates/includes/html-headers.template.html" %}
@@ -15,6 +16,7 @@
         {{ data.max('reference_period_end') | truncate(10, true, "") }}
       </p>
       <p>
+        {# list all of the sources #}
         <b>HDX datasets:</b><br />
         {% for source in resources %}
         {{ source.dataset_hdx_provider_name }},
@@ -26,6 +28,7 @@
         <thead>
           <tr>
             {% for key, value in data.first() %}
+            {# exclude any columns in the stop list #}
             {% if not key in stop_list %}
             <th>{{ key }}</th>
             {% endif %}
@@ -38,6 +41,7 @@
             {% for key, value in row %}
             {% if not key in stop_list %}
             <td>
+              {# simplify dates #}
               {% if key in ['reference_period_start', 'reference_period_end'] %}
               {{ value | truncate(10, true, "") }}
               {% else %}

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+  {# Nunjucks template for rendering an admin1 page #}
   <head>
     <title>{{ admin1.name }}, {{ admin1.location_name }}</title>
     {% include "templates/includes/html-headers.template.html" %}
@@ -11,16 +11,25 @@
     <header>
       {% include "templates/includes/breadcrumbs.template.html" %}
       <h1>{{ admin1.name }}, {{ admin1.location_name }} ({{ admin1.code }})</h1>
+      <nav class="jump-links">
+        {# will render only on small screens #}
+        <b>Jump to:</b>
+        <a href="#admin2">Administrative subdivisions</a>
+      </nav>
     </header>
 
     <main>
+      {#
+        Intersectoral infoboxes
+        The includes will check if data is actually available
+        Including these could be configurable (build-a-bear)
+      #}
       <section id="top-line">
         <h2>
           <img alt="Blue humanitarian icon for information management" class="icon" src="img/information-management.svg" />
           <a href="#top-line">Top-line figures</a>
         </h2>
         <div class="infoboxes">
-          {# the includes will check if data is actually available #}
           {% include "templates/includes/population.template.html" %}
           {% include "templates/includes/idps.template.html" %}
           {% include "templates/includes/poverty-rate.template.html" %}
@@ -31,6 +40,10 @@
         </div>
       </section>
 
+      {#
+        Individual sector infoboxes (humanitarian needs and operational presence only)
+        hapi-brief.js will have populated the sectors variable
+      #}
       {% for sector in sectors.sort(['name']) %}
       <section id="{{ sector.code }}">
         <h2>

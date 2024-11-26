@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+  {# Nunjucks template for rendering an admin1 page #}
   <head>
     <title>{{ admin2.name }}, {{ admin2.admin1_name }}, {{ admin2.location_name }}</title>
     {% include "templates/includes/html-headers.template.html" %}
@@ -15,6 +15,11 @@
 
     <main>
 
+      {#
+        Intersectoral infoboxes
+        The includes will check if data is actually available
+        Including these could be configurable (build-a-bear)
+      #}
       <section id="top-line">
         <h2>
           <img alt="Blue humanitarian icon for information management" class="icon" src="img/information-management.svg" />
@@ -30,7 +35,10 @@
         </div>
       </section>
 
-      {# Include an additional section for each available sector #}
+      {#
+        Individual sector infoboxes (humanitarian needs and operational presence only)
+        hapi-brief.js will have populated the sectors variable
+      #}
       {% for sector in sectors.sort(['name']) %}
       <section id="{{ sector.code }}">
         <h2>
