@@ -1,3 +1,4 @@
+{# Display a key figure n within an infobox, at appropriate order of magnitude #}
 {% if n >= 1000000000 %}
 <span class="figure">{{ (n / 1000000000) | nfmt }}</span>B
 {% elseif n >= 1000000 %}

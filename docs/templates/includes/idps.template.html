@@ -1,3 +1,8 @@
+{#
+    Display IDP data as an infobox.
+    Uses the idps variable populated by hapi-brief.js.
+    The key figure is the total IDPs.  There are no supplemental figures.
+#}
 {% if idps.has_data %}
 {% set latest_idps = idps.data.withRows(idps.latest_date) %}
 <div class="infobox">
@@ -10,13 +15,9 @@
   </div>
   <div class="metadata">
     <a class="data-link" href="table.html?category=affected-people&amp;subcategory=idps&amp;{{ geo_type }}-code={{geo.code}}">data</a>
-
     |
-
     <span class="date">{{ idps.latest_date | truncate(7, true, "") }}</span>
-
     <br />
-    
     <span class="sources">{{ idps.sources | join(", ") }}</span>
   </div>
 </div>

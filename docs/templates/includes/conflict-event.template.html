@@ -1,3 +1,10 @@
+{#
+    Display conflict-event data as an infobox.
+    Key figure is the total number of events in the past 90 days.
+    Supplemental figures are fatalities, etc.
+    Uses the conflict_event variable populated by hapi-brief.js, already filtered to the past 90 days.
+    Not currently used at the location level (until we have date filtering), because the data is too big.
+#}
 {% if conflict_event.has_data %}
 <div class="infobox">
   <div class="key-figure">
@@ -12,6 +19,7 @@
     {% set n = conflict_event.data.withRows("event_type", event_type).sum('events') %}
     {% if n > 0 %}
     <tr>
+      {# replace "_" with " " to make human-readable event-type names #}
       <td>{{ event_type | replace("_", " ") }} events:</td>
       <td>
         {% include "templates/includes/supplemental-figure.template.html" %}
@@ -22,13 +30,9 @@
   </table>
   <div class="metadata">
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=conflict-event&amp;{{ geo_type }}-code={{geo.code}}">data</a>
-
     |
-    
     <span class="date">{{ conflict_event.latest_date | truncate(7, true, "") }}</span>
-
     <br />
-    
     <span class="sources">{{ conflict_event.sources | join(", ") }}</span>
   </div>
 </div>

@@ -139,7 +139,7 @@ async function render_admin1 () {
     }
     info.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: info.admin1.location_code, provider_admin1_name: info.admin1.name }, availability);
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode }, availability);
-    if (!info.operational_presence.has_data) {
+    if (!info.operational_presence || !info.operational_presence.has_data) {
         // availability does not apply
         info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin1_name: info.admin1.name });
         info.op_use_provider_name = true;
@@ -174,7 +174,7 @@ async function render_admin2 () {
     info.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode }, availability);
     info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode }, availability);
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode }, availability);
-    if (!info.operational_presence.has_data) {
+    if (!info.operational_presence || !info.operational_presence.has_data) {
         // can't use availability
         info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin2_name: info.admin2.name });
         info.op_use_provider_name = true;
@@ -393,7 +393,8 @@ async function get_conflict_event (property, value, days, availability) {
  */
 async function get_subcategory (category, subcategory, params, availability) {
 
-    if (availability !== null && !availability.contains('subcategory', subcategory)) {
+    // If we have an availability table, and the subcategory isn't in it, skip
+    if (availability && !availability.contains('subcategory', subcategory)) {
         return null;
     }
     

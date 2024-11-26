@@ -1,4 +1,13 @@
-{% if funding.data.length() > 0 %}
+{#
+    Display funding data for a response plan (appeal) as multiple infoboxes.
+    Uses the funding variable populated by hapi-brief.js.
+    The key figure is the total requested funding for the appeal.
+    Supplemental figure is the amount funded so far, with percentage.
+    There is a separate infobox for each appeal.
+    Note that a country may be tagged in multiple appeals.
+    Amounts are always in USD.
+#}
+{% if funding.data.has_data %}
 {% for appeal in funding.data.withRows("reference_period_end", funding.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
@@ -20,13 +29,9 @@
   </table>
   <div class="metadata">
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=funding&amp;location-code={{location.code}}">data</a>
-
     |
-
     <span class="date">{{ funding.latest_date | truncate(4, true, "") }}</span>
-    
     <br />
-
     <span class="sources">{{ funding.sources | join(", ") }}</span>
   </div>
 </div>

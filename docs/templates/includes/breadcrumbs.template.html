@@ -1,3 +1,8 @@
+{#
+    Show breadcrumbs for a page.
+    Expects the geo variable to be set to object for the current admin level.
+    If facet is also set, assume we're previewing data, and show the current admin level as well.
+#}
 {% if geo %}
 <nav class="breadcrumbs">
   <a href="locations.html">Locations</a>

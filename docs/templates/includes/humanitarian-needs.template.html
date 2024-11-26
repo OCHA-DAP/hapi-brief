@@ -1,12 +1,24 @@
+{#
+    Display humanitarian needs as a multiple infoboxes.
+    Uses the humanitarian_needs variable populated by hapi-brief.js.
+    If the sector_code variable is set, shows only needs for that sector (if available);
+    otherwise uses Intersectoral by default.
+    Generate a separate infobox for affected, in need, and targeted (as available).
+    The key figure is the total people in need.
+    Supplemental figures are broken down by all of the categories supplied by HPC Tools.
+    FIXME: if we go back to gender/age disaggregation, this will need to be rewritten.
+#}
 {% if sector %}
 {% set sector_code = sector.code %}
 {% else %}
 {% set sector_code = 'Intersectoral' %}
 {% endif %}
 
+{# filter to only the rows for the sector we've chosen (possibly Intersectoral) #}
 {% set filtered_pin = humanitarian_needs.data.withRows("sector_code", sector_code).cache() %}
 {% if filtered_pin.length() > 0 %}
 
+{# Iterate through the different statuses, and create a separate infobox for each (if available) #}
 {% for status in [["AFF", "People affected"], ["INN", "People in need"], ["TGT", "Targeted for assistance"]] %}
 {% set pin_date = filtered_pin.max("reference_period_end") %}
 {% set latest_pin = filtered_pin.withRows("population_status", status[0]).withRows("reference_period_end", pin_date).cache() %}
@@ -48,19 +60,12 @@
     {% else %}
     <a class="data-link" href="table.html?category=affected-people&amp;subcategory=humanitarian-needs&amp;{{ geo_type }}-code={{ geo.code }}&amp;sector_code={{ sector_code }}">data</a>
     {% endif %}
-
     |
-
     <span class="date">{{ pin_date | truncate(7, true, "") }}</span>
-
     <br />
-
     <span class="sources">{{ humanitarian_needs.sources | join(", ") }}</span>
-
   </div>
-
 </div>
 {% endif %}
 {% endfor %}
-
 {% endif %}

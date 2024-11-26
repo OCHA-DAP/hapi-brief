@@ -1,5 +1,15 @@
+{#
+    Display food-price data as an infobox.
+    Use the food_price variable already populated by hapi-brief.js.
+    The key figure is the number of prices available.
+    Supplemental figures are prices for individual commodities.
+    Not currently used at the location level (until we have date filtering), because the data is too big.
+    TODO: show the units for each food type (e.g. litre, basket).
+#}
 {% if food_price.has_data %}
+{# limit food prices to the latest available date #}
 {% set latest_food_price = food_price.data.withRows("reference_period_end", food_price.latest_date).cache() %}
+{# FIXME assumes all prices in a country use the same currency code (might not always hold true) #}
 {% set currency_code = latest_food_price.last().currency_code %}
 <div class="infobox">
   <div class="key-figure">
@@ -16,6 +26,7 @@
     {% set commodity_price =latest_food_price.withRows('commodity_name', commodity_name) %}
     {% if commodity_price.length() > 0 %}
     <tr>
+      {# display a range of prices, minimum to maximum #}
       {% set min_price = commodity_price.min('price') %}
       {% set max_price = commodity_price.max('price') %}
       <td>{{ commodity_name }}</td>
