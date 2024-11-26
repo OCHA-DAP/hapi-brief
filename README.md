@@ -22,7 +22,7 @@ Choose a location (country), then follow through to an admin1 or admin2, as appr
 
 This is entirely a browser-side application, based in [docs/](docs/) as the root.  Each of the HTML files inside docs will redraw itself after loading the appropriate data from HAPI.
 
-The core script is [hapi-brief.js](docs/scripts/hapi-brief.js), which reads the GET parameters, loads the appropriate data from HAPI, then uses the [Nunjucks]() library to redraw the page using templates stored in [docs/templates/](docs/templates/).  Those templates in turn include reusable template fragments from inside [docs/templates/includes/](docs/templates/includes/).
+The core script is [hapi-brief.js](docs/scripts/hapi-brief.js), which reads the GET parameters, loads the appropriate data from HAPI, then uses the [Nunjucks](https://mozilla.github.io/nunjucks/) library to redraw the page using templates stored in [docs/templates/](docs/templates/).  Those templates in turn include reusable template fragments from inside [docs/templates/includes/](docs/templates/includes/).  All pages are fully bookmarkable, and links exchanged via email or social media will preserve the state.
 
 The templates (especially the includes) take advantage of the simple _Data Filter_ (DF) library to do dynamic context-sensitive data filtering on the fly, reducing the burden on the main script.  For more information, see [README.DF.md](README.DF.md).
 
