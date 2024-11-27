@@ -1,3 +1,9 @@
+{#
+    Display returnees data as an infobox.
+    Uses the returnees variable populated by hapi_brief.js
+    The key figure is total refugees.
+    Supplemental figures are the gender breakdown, if available
+#}
 {% if returnees.has_data %}
 {% set latest_returnees = returnees.data.withRows("reference_period_end", returnees.latest_date).withRows("age_range", "all").cache() %}
 <div class="infobox">

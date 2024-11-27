@@ -1,3 +1,9 @@
+{#
+    Display national-risk data as an infobox
+    Uses the national_risk variable populated by hapi-brief.js.
+    The key figure is the overall-risk score.
+    Supplemental figures are coping capacity, hazard, and vulnerability.
+#}
 {% if national_risk.has_data %}
 {% set latest_national_risk = national_risk.data.withRows("reference_period_end", national_risk.latest_date).cache() %}
 <div class="infobox">
@@ -24,16 +30,10 @@
 
   <div class="metadata">
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=national-risk&amp;location-code={{location.code}}">data</a>
-
     |
-
     <span class="date">{{ national_risk.latest_date | truncate(4, true, "") }}</span>
-    
     <br />
-    
     <span class="sources">{{ national_risk.sources | join(", ") }}</span>
-    
   </div>
-
 </div>
 {% endif %}

@@ -8,6 +8,7 @@
     Supplemental figures are broken down by all of the categories supplied by HPC Tools.
     FIXME: if we go back to gender/age disaggregation, this will need to be rewritten.
 #}
+{% if humanitarian_needs.has_data %}
 {% if sector %}
 {% set sector_code = sector.code %}
 {% else %}
@@ -68,4 +69,5 @@
 </div>
 {% endif %}
 {% endfor %}
+{% endif %}
 {% endif %}

@@ -88,21 +88,22 @@ async function render_location () {
     let availability = await get_data('metadata', 'data-availability', { location_code: info.location.code });
 
     // Subcategories (as available)
+    // get_subcategory will use the availability data to skip calls for unavailable data
+
     info.population = await get_subcategory("population-social", "population", { admin_level: 0, location_code: pcode }, availability);
-    info.population.data = info.population.data.withRows('provider_admin1_name', ''); // FIXME temporary HAPI bug work-around
+
     info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 0, location_code: pcode }, availability);
-    if (info.humanitarian_needs.data.length() == 0) {
-        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, location_code: pcode }, availability);
-    }
-    if (info.humanitarian_needs.data.length() == 0) {
-        // Can't use availability table
-        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, location_code: pcode }, availability);
-    }
+
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { location_code: pcode }, availability);
+
     info.funding = await get_subcategory("coordination-context", "funding", { location_code: pcode }, availability);
+
     info.refugees = await get_subcategory("affected-people", "refugees", { asylum_location_code: pcode }, availability);
+
     info.returnees = await get_subcategory("affected-people", "returnees", { asylum_location_code: pcode }, availability);
+
     info.idps = await get_subcategory("affected-people", "idps", { admin_level: 0, location_code: pcode }, availability);
+
     info.national_risk = await get_subcategory("coordination-context", "national-risk", { location_code: pcode }, availability);
 
     // Extract the sectors from 3W and PIN data
@@ -132,19 +133,33 @@ async function render_admin1 () {
 
     // Subcategories (as available)
     info.population = await get_subcategory("population-social", "population", { admin_level: 1, admin1_code: pcode }, availability);
-    info.population.data = info.population.data.withRows('provider_admin2_name', ''); // FIXME temporary HAPI bug work-around
-    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode }, availability);
-    if (info.humanitarian_needs.data.length() == 0) {
-        info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin1_code: pcode }, availability);
+    if (!info.population || !info.population.has_data) {
+        // No p-coded data; try for a match on provider_admin1_name
+        // availability does not apply
+        info.operational_presence = await get_subcategory("population-social", "population", {
+            location_code: info.admin1.location_code,
+            provider_admin1_name: info.admin1.name
+        });
+        info.pop_use_provider_name = true;
     }
+
+    info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 1, admin1_code: pcode }, availability);
+
     info.poverty_rate = await get_subcategory("population-social", "poverty-rate", { location_code: info.admin1.location_code, provider_admin1_name: info.admin1.name }, availability);
+
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin1_code: pcode }, availability);
     if (!info.operational_presence || !info.operational_presence.has_data) {
+        // No p-coded data; try for a match on provider_admin1_name
         // availability does not apply
-        info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin1_name: info.admin1.name });
+        info.operational_presence = await get_subcategory("coordination-context", "operational-presence", {
+            location_code: info.admin1.location_code,
+            provider_admin1_name: info.admin1.name
+        });
         info.op_use_provider_name = true;
     }
+
     info.idps = await get_subcategory("affected-people", "idps", { admin_level: 1, admin1_code: pcode }, availability);
+
     info.food_price = await get_subcategory("food", "food-price", { admin1_code: pcode }, availability);
 
     info.conflict_event = await get_conflict_event("admin1_code", pcode, 90, availability);
@@ -171,15 +186,34 @@ async function render_admin2 () {
     availability = await get_data('metadata', 'data-availability', { admin2_code: info.admin2.code });
 
     // Subcategories (as available)
+    // get_subcategory will use the availability data to skip calls for unavailable data
+
     info.population = await get_subcategory("population-social", "population", { admin_level: 2, admin2_code: pcode }, availability);
+    if (!info.population || !info.population.has_data) {
+        // No p-coded data; try for a match on provider_admin2_name
+        // availability does not apply
+        info.operational_presence = await get_subcategory("population-social", "population", {
+            location_code: info.admin2.location_code,
+            provider_admin2_name: info.admin2.name
+        });
+        info.pop_use_provider_name = true;
+    }
+
     info.humanitarian_needs = await get_subcategory("affected-people", "humanitarian-needs", { admin_level: 2, admin2_code: pcode }, availability);
+
     info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { admin2_code: pcode }, availability);
     if (!info.operational_presence || !info.operational_presence.has_data) {
+        // No p-coded data; try for a match on provider_admin2_name
         // can't use availability
-        info.operational_presence = await get_subcategory("coordination-context", "operational-presence", { provider_admin2_name: info.admin2.name });
+        info.operational_presence = await get_subcategory("coordination-context", "operational-presence", {
+            location_code: info.admin2.location_code,
+            provider_admin2_name: info.admin2.name
+        });
         info.op_use_provider_name = true;
     }
+
     info.idps = await get_subcategory("affected-people", "idps", { admin_level: 2, admin2_code: pcode }, availability);
+
     info.food_price = await get_subcategory("food", "food-price", { admin2_code: pcode }, availability);
 
     info.conflict_event = await get_conflict_event("admin2_code", pcode, 90, availability);
@@ -383,7 +417,9 @@ async function get_conflict_event (property, value, days, availability) {
     let today = new Date();
     let limit = new Date(new Date().setDate(today.getDate() - days)).toISOString();
     let result = await get_subcategory("coordination-context", "conflict-event", { [property]: value }, availability);
-    result.data = result.data.filter(r => (r.reference_period_start >= limit));
+    if (result && result.has_data) {
+        result.data = result.data.filter(r => (r.reference_period_start >= limit));
+    }
     return result;
 }
 

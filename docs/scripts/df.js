@@ -4,6 +4,8 @@
  * Usage:
  *
  *  data = new DF.Data(raw_data);
+ *
+ * See README.DF.md in the repo root for full documentation.
  *  
  *
  * Started 2024-10 by David Megginson
@@ -11,7 +13,7 @@
  ****************************************************************/
 
 
-// Pseudo-namespace (change into module later)
+// Pseudo-namespace (TODO change into module later)
 let DF = {};
 
 
@@ -198,6 +200,7 @@ DF.Data = class {
     }
 
 }
+
 
 /**
  * Base class for caching filters.

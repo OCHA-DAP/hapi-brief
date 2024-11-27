@@ -1,4 +1,11 @@
-{% if population.data.length() > 0 %}
+{#
+    Display population data in an infobox.
+    Uses the population variable populated by hapi-brief.js
+    Key figure is the total population.
+    Supplemental figures are population by gender.
+    TODO we could try matching by provider_*_name, as with operational_presence
+#}
+{% if population.has_data %}
 {% set latest_population = population.data.withRows("age_range", "all").withRows("reference_period_end", population.latest_date) %}
 <div class="infobox">
   <div class="key-figure">
@@ -23,14 +30,16 @@
     {% endfor %}
   </table>
   <div class="metadata">
+    {% if pop_use_provider_name %}
+    {# we matched on the provider_admin*_name #}
+    <a class="data-link" href="table.html?category=population-social&amp;subcategory=population&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
+    {% else %}
+    {# we matched on the P-code #}
     <a class="data-link" href="table.html?category=population-social&amp;subcategory=population&amp;{{ geo_type }}-code={{ geo.code }}">data</a>
-
+    {% endif %}
     |
-
     <span class="date">{{ population.latest_date | truncate(10, true, "") }}</span>
-
     <br />
-    
     <span class="sources">{{ population.sources | join(", ") }}</span>
   </div>
 </div>

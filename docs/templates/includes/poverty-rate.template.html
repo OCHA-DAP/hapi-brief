@@ -1,3 +1,9 @@
+{#
+    Display poverty-rate data as an infobox.
+    Uses the poverty_rate variable populated by hapi-brief.js
+    The key figure is the MPI.
+    Supplemental figures are severe and vulnerable
+#}
 {% if poverty_rate.has_data %}
 {% set latest_poverty_rate = poverty_rate.data.withRows("reference_period_end", poverty_rate.latest_date).cache() %}
 <div class="infobox">

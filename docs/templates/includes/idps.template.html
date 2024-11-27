@@ -2,6 +2,8 @@
     Display IDP data as an infobox.
     Uses the idps variable populated by hapi-brief.js.
     The key figure is the total IDPs.  There are no supplemental figures.
+    TODO: it is also sometimes possible to extract IDP data from humanitarian_needs if
+    it's missing from the IOM data, but I've removed that fallback for now.
 #}
 {% if idps.has_data %}
 {% set latest_idps = idps.data.withRows(idps.latest_date) %}

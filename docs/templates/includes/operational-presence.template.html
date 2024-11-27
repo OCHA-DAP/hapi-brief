@@ -1,26 +1,36 @@
 {#
-Template for an operational-presence infobox
-
-Sum up the total organisations at or below the current admin level, filtered by sector if provided,
-then provide a breakdown by org type in the supplemental figures.
+    Display 3W data as an infobox.
+    Uses the operational_presence variable populated by hapi-brief.js
+    The key figure is the total unique organisations working.
+    Supplemental figures are org counts broken down by org type.
+    If the admin1 or admin2 is not tracked, hapi-brief.js will have tried for a name match
+    on provider_admin1_name or provider_admin2_name and set op_provider_name to true if
+    successful.
+    If the sector variable is set, use only data for that sector; otherwise, use all sectors.
+    Unlike most data types, we aggregate up here, so figures associated with
+    and admin2 will also appear for the parent admin1 and grandparent location.
 #}
-
 {% if operational_presence.has_data %}
+
+{# Create aggregated data, filtering by sector if required #}
 {% if sector %}
 {% set op_filtered = operational_presence.data.withRows('sector_code', sector.code).withRows(operational_presence.latest_date).aggregate(["org_name", "org_acronym", "org_type_description"]).cache() %}
 {% else %}
 {% set op_filtered = operational_presence.data.withRows(operational_presence.latest_date).aggregate(["org_name", "org_acronym", "org_type_description"]).cache() %}
 {% endif %}
+
 {% if op_filtered.length() > 0 %}
 <div class="infobox">
   <div class="key-figure">
     <span class="label">
       <span class="inner">Organisations responding</span>
     </span>
+    {# total number of orgs #}
     {% set n=op_filtered.length() %}
     {% include "templates/includes/key-figure.template.html" %}
   </div>
   <table class="supplemental-figures">
+    {# number of orgs of each time #}
     {% for type in op_filtered.values("org_type_description") | sort %}
     <tr>
       <td>{{ type | default("<unspecified>", true) }}</td>
@@ -29,22 +39,18 @@ then provide a breakdown by org type in the supplemental figures.
     {% endfor %}
   </table>
   <div class="metadata">
-
     {% if op_use_provider_name %}
+    {# we matched on the provider_admin*_name #}
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}&amp;provider-{{ geo_type }}-name={{ geo.name }}">data</a>
     {% else %}
+    {# we matched on the P-code #}
     <a class="data-link" href="table.html?category=coordination-context&amp;subcategory=operational-presence&amp;sector-code={{ sector.code }}&amp;{{ geo_type }}-code={{geo.code}}">data</a>
     {% endif %}
-    
     |
-
     <span class="date">{{ operational_presence.latest_date | truncate(7, true, "") }}</span>
-
     <br />
-    
     <span class="sources">{{ operational_presence.sources | join(", ") }}</span>
   </div>
-  
 </div>
 {% endif %}
 {% endif %}
